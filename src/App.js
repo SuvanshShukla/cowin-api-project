@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "./Components/Navbar/Navbar";
-// import paper from "papercss/dist/paper.css";
-// import "./App.css";
+import "./App.css";
 import axios from "axios";
 
 function App() {
@@ -31,19 +30,22 @@ function App() {
   }
 
   return (
-    <body className="App-header">
-      <Navbar />
-      <div>
-        <h1>COWIN Check</h1>
-      </div>
+    <div>
+        <Navbar />
+      <body className="App-header">
+        <div>
+          <h1>COWIN Check</h1>
+        </div>
       
-      {/* <span className="text"> Enter your State Below</span> */}
-      {/* <input type="text" placeholder="Enter Your State" id="paperInputs1" onChange={(e) => getDistrictName(e)} value={name}/> */}
-      <input type="text" placeholder="anfsnfo"/>
-      <button onClick={() => getStates()} >
-        Click Me!
-      </button>
-    </body>
+        <div>
+          <span className="text"> Enter your State Below</span>
+          <input type="text" placeholder="Enter Your State" id="paperInputs1" onChange={(e) => getDistrictName(e)} value={name}/>
+        </div>
+        <button onClick={() => getStates()} >
+          Click Me!
+        </button>
+      </body>
+    </div>
   );
 }
 

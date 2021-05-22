@@ -1,32 +1,50 @@
-import React from 'react';
-// import "papercss/dist/paper.css"
-// import 'papercss';
-
-const navbar = () => {
-
-    return(
-        <nav className="border fixed split-nav">
-        <div className="nav-brand">
-          <h3><a href="#">COWIN Check</a></h3>
-        </div>
-        <div className="collapsible">
-          <input id="collapsible1" type="checkbox" name="collapsible1" />
-          <label for="collapsible1">
-            <div className="bar1"></div>
-            <div className="bar2"></div>
-            <div className="bar3"></div>
-          </label>
-          <div className="collapsible-body">
-            <ul className="inline">
-              <li><a href="#">Documentation</a></li>
-              <li><a href="#">About</a></li>
-              <li><a href="https://github.com/SuvanshShukla" target="_blank" rel="noreferrer">Github</a></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    );
-}
+import React from "react";
+import { makeStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+// import MenuIcon from '@material-ui/icons/Menu';
 
 
-export default navbar;
+const useStyles = makeStyles((theme) => ({
+    root: {
+      flexGrow: 1,
+    },
+    menuButton: {
+      marginRight: theme.spacing(2),
+    },
+    title: {
+      flexGrow: 1,
+    },
+  }));
+
+
+  function Navbar(){
+    const classes = useStyles();
+
+
+  return (
+    <div className={classes.root}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="menu"
+            >
+              {/* <MenuIcon /> */}hello
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              News
+            </Typography>
+            <Button color="inherit">Login</Button>
+          </Toolbar>
+        </AppBar>
+    </div>
+  );
+};
+
+export default Navbar;
