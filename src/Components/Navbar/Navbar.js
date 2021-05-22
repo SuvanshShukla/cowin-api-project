@@ -1,5 +1,5 @@
 import React from 'react';
-import "papercss/dist/paper.css"
+// import "papercss/dist/paper.css"
 // import 'papercss';
 
 const navbar = () => {

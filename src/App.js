@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "./Components/Navbar/Navbar";
-import "papercss/dist/paper.css";
-import "./App.css";
+// import paper from "papercss/dist/paper.css";
+// import "./App.css";
 import axios from "axios";
 
 function App() {
@@ -25,12 +25,10 @@ function App() {
   };
 
   const getStates = () => {
-    axios
-      .get("https://cdn-api.co-vin.in/api/v2/admin/location/states")
-      .then((res) => {
-        console.log(res.data);
-      });
-  };
+    axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/states").then((res) => {
+      console.log(res.data)
+    })
+  }
 
   return (
     <body className="App-header">
@@ -38,15 +36,13 @@ function App() {
       <div>
         <h1>COWIN Check</h1>
       </div>
-      <div className="row">
-        <div className="col sm-4">
-          <div className="form-group">
-            <label for="paperInputs2">Block Level</label>
-            <input className="input-block" type="text" id="paperInputs2" />
-          </div>
-        </div>
-      </div>
-      <button onClick={() => getStates()}>Click Me!</button>
+      
+      {/* <span className="text"> Enter your State Below</span> */}
+      {/* <input type="text" placeholder="Enter Your State" id="paperInputs1" onChange={(e) => getDistrictName(e)} value={name}/> */}
+      <input type="text" placeholder="anfsnfo"/>
+      <button onClick={() => getStates()} >
+        Click Me!
+      </button>
     </body>
   );
 }
