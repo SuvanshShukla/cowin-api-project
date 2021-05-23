@@ -1,9 +1,29 @@
 import React, { useState } from "react";
 import Navbar from "./Components/Navbar/Navbar";
-import "./App.css";
+import { makeStyles } from '@material-ui/core/styles';
+// import "./App.css";
 import axios from "axios";
+import {TextField} from '@material-ui/core';
+
+
+const a = makeStyles((theme) => ({
+  wrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    // flexWrap: 'wrap',
+    border: 'solid 2px silver'
+  }
+}))
+
+
+
 
 function App() {
+  const classes = a();
+
+
   const [info, setInfo] = useState();
   const [name, setName] = useState("");
   const getInfo = (a) => {
@@ -30,9 +50,9 @@ function App() {
   }
 
   return (
-    <div>
+    <React.Fragment>
         <Navbar />
-      <body className="App-header">
+      <div className={classes.wrapper}>
         <div>
           <h1>COWIN Check</h1>
         </div>
@@ -44,8 +64,15 @@ function App() {
         <button onClick={() => getStates()} >
           Click Me!
         </button>
-      </body>
-    </div>
+        <div>
+        <form noValidate autoComplete="off">
+      <TextField id="standard-basic" label="Standard" />
+      <TextField id="filled-basic" label="Filled" variant="filled" />
+      <TextField id="outlined-basic" label="Outlined" variant="outlined" />
+    </form>
+        </div>
+      </div>
+    </React.Fragment>
   );
 }
 
