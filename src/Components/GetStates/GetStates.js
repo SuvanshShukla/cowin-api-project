@@ -20,6 +20,7 @@ function GetState() {
 
   const [info, setInfo] = useState();
   const [name, setName] = useState("");
+  const [districts, setDistrics] = useState();
 
   //we use this to get state names the first time it the component mounts
   useEffect(() => {
@@ -54,8 +55,8 @@ function GetState() {
         console.log(name);
         let district_id = element.state_id;
         axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + district_id).then((res) => {
-            let incomingDistricts = res.data;
-            console.log(incomingDistricts);
+            setDistrics(res.data);
+            console.log(districts);
         })
       }
     });
