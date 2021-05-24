@@ -9,28 +9,29 @@ const a = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    // flexWrap: 'wrap',
     border: "solid 2px silver",
     height: "100vh",
   },
 }));
 
 function GetState() {
-    //we use this to get state names the first time it mounts
-    useEffect(() => {
-        let incomingData;
-        axios
-          .get("https://cdn-api.co-vin.in/api/v2/admin/location/states")
-          .then((res) => {
-            incomingData = res.data.states;
-            console.log(incomingData);
-          });
-      }, []);
-
+  let incomingData;
   const classes = a();
 
   const [info, setInfo] = useState();
   const [name, setName] = useState("");
+
+  //we use this to get state names the first time it the component mounts
+  useEffect(() => {
+    axios
+      .get("https://cdn-api.co-vin.in/api/v2/admin/location/states")
+      .then((res) => {
+        incomingData = res.data.states;
+        setInfo(incomingData);
+        console.log(incomingData);
+      });
+  }, []);
+
   const getInfo = (a) => {
     axios
       .get(
@@ -45,16 +46,20 @@ function GetState() {
 
   const getStateName = (e) => {
     setName(e.target.value);
-    console.log(name);
   };
 
-  const getStates = () => {
-    //   incomingData.forEach(i => {
-    //     i.state_name === name? console.log(true): console.log(false);
-    //   });
+  const checkStateName = () => {
+    info.forEach((element) => {
+      if (element.state_name === name) {
+        console.log(name);
+        let district_id = element.state_id;
+        axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + district_id).then((res) => {
+            let incomingDistricts = res.data;
+            console.log(incomingDistricts);
+        })
+      }
+    });
   };
-
-  
 
   return (
     <>
@@ -69,7 +74,12 @@ function GetState() {
             }}
           />
         </form>
-        <Button variant="contained" color="primary" onClick={() => getStates()}>
+        <Button
+          variant="contained"
+          color="primary"
+          value={name}
+          onClick={() => checkStateName()}
+        >
           Click Me!
         </Button>
       </div>
