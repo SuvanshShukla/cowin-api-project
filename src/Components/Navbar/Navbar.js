@@ -5,7 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-// import MenuIcon from '@material-ui/icons/Menu';
+import Sidebar from "../Sidebar/Sidebar";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -35,10 +35,11 @@ const useStyles = makeStyles((theme) => ({
               color="inherit"
               aria-label="menu"
             >
-              {/* <MenuIcon /> */}hello
+              {/* <MenuIcon ></MenuIcon> */}
+              <Sidebar/>
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              News
+              Cowin Check
             </Typography>
             <Button color="inherit">Login</Button>
           </Toolbar>
