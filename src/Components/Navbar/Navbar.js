@@ -35,8 +35,8 @@ const useStyles = makeStyles((theme) => ({
               color="inherit"
               aria-label="menu"
             >
-              {/* <MenuIcon ></MenuIcon> */}
-              <Sidebar/>
+              {/* Note that i'm using a different component for the sidebar here but i've put it inside the IconButton tag thats why the icon is still the one for the menu */}
+              <Sidebar/> 
             </IconButton>
             <Typography variant="h6" className={classes.title}>
               Cowin Check

@@ -7,20 +7,20 @@ const a = makeStyles((theme) => ({
   wrapper: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    // justifyContent: "center",
     alignItems: "center",
     border: "solid 2px silver",
-    height: "100vh",
+    minHeight: "100vh",
   },
 }));
 
 function GetState() {
   let incomingData;
   const classes = a();
-
   const [info, setInfo] = useState();
   const [name, setName] = useState("");
-  const [districts, setDistrics] = useState();
+  const [districts, setDistricts] = useState();
+  const [foundState, setFoundState] = useState(true); //the initial value of foundState is true 
 
   //we use this to get state names the first time it the component mounts
   useEffect(() => {
@@ -28,12 +28,16 @@ function GetState() {
       .get("https://cdn-api.co-vin.in/api/v2/admin/location/states")
       .then((res) => {
         incomingData = res.data.states;
-        setInfo(incomingData);
-        console.log(incomingData);
+        if (incomingData != null) {
+          setInfo(incomingData);
+          console.log(incomingData);
+        } else {
+          console.log("incoming Data is null");
+        }
       });
   }, []);
 
-  const getInfo = (a) => {
+  /* const getInfo = (a) => {
     axios
       .get(
         "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=510&date=31-03-2021"
@@ -43,23 +47,40 @@ function GetState() {
         console.log(responseObj.sessions[0]);
         setInfo((a = responseObj.sessions[0].name));
       });
-  };
+  }; */
 
   const getStateName = (e) => {
-    setName(e.target.value);
+    let stateName = e.target.value;
+    //the little bit of code here is used to automatically capitalize the first letter
+    setName(stateName.charAt(0).toUpperCase() + stateName.slice(1));
   };
 
-  const checkStateName = () => {
+  const checkStateName = (a) => {
+    //checks each state with the state name entered by the user
     info.forEach((element) => {
       if (element.state_name === name) {
         console.log(name);
+        //here if the state is found then the state will be set to true
+        setFoundState(true)
         let district_id = element.state_id;
-        axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + district_id).then((res) => {
-            setDistrics(res.data);
+        axios
+          .get(
+            "https://cdn-api.co-vin.in/api/v2/admin/location/districts/" +
+              district_id
+          )
+          .then((res) => {
+            a = res.data.districts;
+            setDistricts(a);
             console.log(districts);
-        })
-      }
+          });
+      } 
     });
+    if(foundState){setFoundState(false);}
+    /* if(foundState){
+      console.log('here!!');
+      let tag = document.getElementById("standard-basic");
+      if() 
+    }*/
   };
 
   return (
@@ -68,6 +89,8 @@ function GetState() {
         <h1>COWIN Check</h1>
         <form autoComplete="on">
           <TextField
+            value={name}
+            error={!foundState ? true : false}
             id="standard-basic"
             label="Enter Your State Name here"
             onChange={(e) => {
@@ -78,11 +101,17 @@ function GetState() {
         <Button
           variant="contained"
           color="primary"
-          value={name}
-          onClick={() => checkStateName()}
+          onClick={() => checkStateName(districts)}
         >
           Click Me!
         </Button>
+        {districts != null
+          ? districts.map((dist, i) => (
+              <ul>
+                <li key={i}>{dist.district_name}</li>
+              </ul>
+            ))
+          : ""}
       </div>
     </>
   );
