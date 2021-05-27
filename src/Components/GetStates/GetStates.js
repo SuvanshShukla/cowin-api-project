@@ -3,6 +3,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { TextField, Button } from "@material-ui/core";
 
+//you need to install dotenv using npm then import and configure like below
+import dotenv from 'dotenv';
+dotenv.config();
+console.log(process.env.REACT_APP_STATES_API); //the REACT_APP prefix is necessary for naming any env variable
+//also remember whenever you add a new environment variable you need to restart npm start
+
+
 const a = makeStyles((theme) => ({
   wrapper: {
     display: "flex",
@@ -15,7 +22,6 @@ const a = makeStyles((theme) => ({
 }));
 
 function GetState() {
-  let incomingData;
   const classes = a();
   const [info, setInfo] = useState();
   const [name, setName] = useState("");
@@ -24,8 +30,9 @@ function GetState() {
 
   //we use this to get state names the first time it the component mounts
   useEffect(() => {
+    let incomingData;
     axios
-      .get("https://cdn-api.co-vin.in/api/v2/admin/location/states")
+      .get(process.env.REACT_APP_STATES_API)
       .then((res) => {
         incomingData = res.data.states;
         if (incomingData != null) {
@@ -75,7 +82,7 @@ function GetState() {
           });
       } 
     });
-    if(foundState){setFoundState(false);}
+    // if(foundState){setFoundState(true);} else{setFoundState(false)}
     /* if(foundState){
       console.log('here!!');
       let tag = document.getElementById("standard-basic");
@@ -90,7 +97,7 @@ function GetState() {
         <form autoComplete="on">
           <TextField
             value={name}
-            error={!foundState ? true : false}
+            error={!foundState}
             id="standard-basic"
             label="Enter Your State Name here"
             onChange={(e) => {
@@ -113,6 +120,7 @@ function GetState() {
             ))
           : ""}
       </div>
+      hello
     </>
   );
 }
