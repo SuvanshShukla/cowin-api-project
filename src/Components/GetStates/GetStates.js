@@ -9,6 +9,12 @@ dotenv.config();
 //console.log(process.env.REACT_APP_STATES_API); //the REACT_APP prefix is necessary for naming any env variable
 //also remember whenever you add a new environment variable you need to restart npm start
 
+const bkgimgs = [
+  "https://images.unsplash.com/photo-1532375810709-75b1da00537c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1510&q=80",
+  "https://images.unsplash.com/photo-1584271854089-9bb3e5168e32?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1502&q=80",
+  "https://images.unsplash.com/photo-1519998994457-43c1f2c8460b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1438&q=80",
+  "https://images.unsplash.com/photo-1512228585554-7c665ed88f80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1500&q=80",
+]
 
 function GetState() {
   const [info, setInfo] = useState();
@@ -28,6 +34,10 @@ function GetState() {
         console.log("incoming Data is null");
       }
     });
+
+  /*   var v = document.getElementsByClassName("backgroundDiv")
+    console.log(v);
+    v.style.backgroundImage = `url(`+bkgimgs[Math.floor(Math.random() * bkgimgs.length)]+`)` */
   }, []);
 
   /* const getInfo = (a) => {
@@ -77,34 +87,39 @@ function GetState() {
   };
 
   return (
-    <>
-      <div className={classes.wrapper}>
-        <h1>COWIN Check</h1>
-        <form autoComplete="on">
-          <TextField
-            value={name}
-            error={!foundState}
-            id="standard-basic"
-            label="Enter Your State Name here"
-            onChange={(e) => {
-              getStateName(e);
-            }}
-          />
-        </form>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => checkStateName(districts)}
-        >
-          Click Me!
-        </Button>
-        <ul>
-          {districts != null
-            ? districts.map((dist, i) => <li key={i}>{dist.district_name}</li>)
-            : ""}
-        </ul>
+    <React.Fragment>
+      <div className={classes.backgroundDiv}>
+        &nbsp;
+        <div className={classes.wrapper}>
+          <h1>COWIN Check</h1>
+          <div className={classes.formDiv}>
+            <form autoComplete="on">
+              <TextField
+                value={name}
+                error={!foundState}
+                id="standard-basic"
+                label="Enter Your State Name here"
+                onChange={(e) => {
+                  getStateName(e);
+                }}
+              />
+            </form>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => checkStateName(districts)}
+            >
+            Click Me!
+          </Button>
+            </div>
+          <ul>
+            {districts != null
+              ? districts.map((dist, i) => <li key={i}>{dist.district_name}</li>)
+              : ""}
+          </ul>
+        </div>
       </div>
-    </>
+    </React.Fragment>
   );
 }
 

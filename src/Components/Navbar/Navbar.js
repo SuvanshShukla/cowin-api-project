@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
             <Typography variant="h6" className={classes.title}>
               Cowin Check
             </Typography>
-            <Button color="inherit">Login</Button>
+            <Button color="inherit" href="https://github.com/SuvanshShukla" target="_blank">My GitHub</Button>
           </Toolbar>
         </AppBar>
     </div>

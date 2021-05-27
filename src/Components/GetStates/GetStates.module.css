@@ -1,3 +1,9 @@
+.backgroundDiv {
+    /* background-image: url(); */
+    background-size: cover;
+    min-height: 120vh;
+}
+
 .wrapper {
     margin: 3%;
     display: flex;
@@ -5,4 +11,9 @@
     align-items: center;
     border: solid 2px silver;
     min-height: 100vh;
+  }
+
+
+  .formDiv {
+      border: solid 2px orchid;
   }
