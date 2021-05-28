@@ -93,17 +93,20 @@ function GetState() {
     y = new URL(bkgimgs[x]);
     console.log(y);
     divbkg = {
+      webkitBackgroundSize: "cover",
+      mozBackgroundSize: "cover",
+      oBackgroundSize: "cover",
       backgroundImage: "url(" + y + ")",
-      backgroundSize: "fill",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat", 
       minHeight: "120vh",
-      overflow: "visible"
+      // overflow: "visible"
     };
   };
 
   return (
-    <React.Fragment>
+    <div>
       <div style={divbkg}>
-        &nbsp;
         <div className={classes.wrapper}>
           <div className={classes.formDiv}>
           <h1><u>Vaccine Check</u></h1>
@@ -139,10 +142,9 @@ function GetState() {
               : ""}
           </ul>
             </div>
-          
         </div>
       </div>
-    </React.Fragment>
+    </div>
   );
 }
 
