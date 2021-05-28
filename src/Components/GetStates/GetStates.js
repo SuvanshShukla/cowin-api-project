@@ -8,12 +8,13 @@ import dotenv from "dotenv";
 dotenv.config();
 //console.log(process.env.REACT_APP_STATES_API); //the REACT_APP prefix is necessary for naming any env variable
 //also remember whenever you add a new environment variable you need to restart npm start
-
+var x, y, divbkg;
 const bkgimgs = [
   "https://images.unsplash.com/photo-1532375810709-75b1da00537c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1510&q=80",
-  "https://images.unsplash.com/photo-1584271854089-9bb3e5168e32?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1502&q=80",
-  "https://images.unsplash.com/photo-1519998994457-43c1f2c8460b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1438&q=80",
-  "https://images.unsplash.com/photo-1512228585554-7c665ed88f80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1500&q=80",
+  "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1502&q=80",
+  "https://images.unsplash.com/photo-1549468057-5b7fa1a41d7a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1502&q=80",
+  "https://images.unsplash.com/photo-1589463349208-95817c91f971?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1500&q=80",
+  "https://images.unsplash.com/photo-1496372412473-e8548ffd82bc?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1475&q=80",
 ]
 
 function GetState() {
@@ -34,10 +35,7 @@ function GetState() {
         console.log("incoming Data is null");
       }
     });
-
-  /*   var v = document.getElementsByClassName("backgroundDiv")
-    console.log(v);
-    v.style.backgroundImage = `url(`+bkgimgs[Math.floor(Math.random() * bkgimgs.length)]+`)` */
+    makeUrl();
   }, []);
 
   /* const getInfo = (a) => {
@@ -86,9 +84,23 @@ function GetState() {
     }*/
   };
 
+  
+  const makeUrl = () => {
+    x = Math.floor(Math.random() * bkgimgs.length)
+    console.log(x);
+    y = new URL(bkgimgs[x])
+    console.log(y);
+    divbkg = {
+      backgroundImage: 'url('+ y +')'
+    }
+     /*   var v = document.getElementsByClassName("backgroundDiv")
+    console.log(v);
+    v.style.backgroundImage = `url(`+bkgimgs[Math.floor(Math.random() * bkgimgs.length)]+`)` */
+  }
+
   return (
     <React.Fragment>
-      <div className={classes.backgroundDiv}>
+      <div className={classes.backgroundDiv} style={divbkg}>
         &nbsp;
         <div className={classes.wrapper}>
           <h1>COWIN Check</h1>
