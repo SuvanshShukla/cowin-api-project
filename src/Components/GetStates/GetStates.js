@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import classes from './GetStates.module.css';
+import classes from "./GetStates.module.css";
 import axios from "axios";
 import { TextField, Button } from "@material-ui/core";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import clsx from "clsx";
 
 //you need to install dotenv using npm then import and configure like below
 import dotenv from "dotenv";
@@ -15,7 +17,7 @@ const bkgimgs = [
   "https://images.unsplash.com/photo-1549468057-5b7fa1a41d7a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1502&q=80",
   "https://images.unsplash.com/photo-1589463349208-95817c91f971?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1500&q=80",
   "https://images.unsplash.com/photo-1496372412473-e8548ffd82bc?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1475&q=80",
-]
+];
 
 function GetState() {
   const [info, setInfo] = useState();
@@ -84,49 +86,54 @@ function GetState() {
     }*/
   };
 
-  
   const makeUrl = () => {
-    x = Math.floor(Math.random() * bkgimgs.length)
+    x = Math.floor(Math.random() * bkgimgs.length);
     console.log(x);
-    y = new URL(bkgimgs[x])
+    y = new URL(bkgimgs[x]);
     console.log(y);
     divbkg = {
-      backgroundImage: 'url('+ y +')'
-    }
-     /*   var v = document.getElementsByClassName("backgroundDiv")
-    console.log(v);
-    v.style.backgroundImage = `url(`+bkgimgs[Math.floor(Math.random() * bkgimgs.length)]+`)` */
-  }
+      backgroundImage: "url(" + y + ")",
+      backgroundSize: "cover",
+      minHeight: "120vh",
+      backgroundAttachment: "scroll",
+    };
+  };
 
   return (
     <React.Fragment>
-      <div className={classes.backgroundDiv} style={divbkg}>
+      <div style={divbkg}>
         &nbsp;
         <div className={classes.wrapper}>
-          <h1>COWIN Check</h1>
           <div className={classes.formDiv}>
+          <h1>COWIN Check</h1>
             <form autoComplete="on">
               <TextField
-                value={name}
-                error={!foundState}
-                id="standard-basic"
-                label="Enter Your State Name here"
-                onChange={(e) => {
-                  getStateName(e);
+                label="Enter State"
+                id="outlined-start-adornment"
+                className={clsx(classes.margin, classes.textField)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start"></InputAdornment>
+                  ),
                 }}
+                variant="outlined"
+                value={name}
+                onChange={(e) => {getStateName(e)}}
               />
             </form>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => checkStateName(districts)}
-            >
-            Click Me!
-          </Button>
             </div>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => checkStateName(districts)}
+            >
+              Click Me!
+            </Button>
           <ul>
             {districts != null
-              ? districts.map((dist, i) => <li key={i}>{dist.district_name}</li>)
+              ? districts.map((dist, i) => (
+                  <li key={i}>{dist.district_name}</li>
+                ))
               : ""}
           </ul>
         </div>
