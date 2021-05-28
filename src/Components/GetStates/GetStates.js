@@ -60,6 +60,7 @@ function GetState() {
 
   const checkStateName = (a) => {
     //checks each state with the state name entered by the user
+    setFoundState(false)
     info.forEach((element) => {
       if (element.state_name === name) {
         console.log(name);
@@ -93,9 +94,9 @@ function GetState() {
     console.log(y);
     divbkg = {
       backgroundImage: "url(" + y + ")",
-      backgroundSize: "cover",
+      backgroundSize: "fill",
       minHeight: "120vh",
-      backgroundAttachment: "scroll",
+      overflow: "visible"
     };
   };
 
@@ -105,7 +106,7 @@ function GetState() {
         &nbsp;
         <div className={classes.wrapper}>
           <div className={classes.formDiv}>
-          <h1>COWIN Check</h1>
+          <h1><u>Vaccine Check</u></h1>
             <form autoComplete="on">
               <TextField
                 label="Enter State"
@@ -118,10 +119,11 @@ function GetState() {
                 }}
                 variant="outlined"
                 value={name}
+                error={!foundState}
                 onChange={(e) => {getStateName(e)}}
               />
             </form>
-            </div>
+            <br />
             <Button
               variant="contained"
               color="primary"
@@ -129,13 +131,15 @@ function GetState() {
             >
               Click Me!
             </Button>
-          <ul>
+            <ul>
             {districts != null
               ? districts.map((dist, i) => (
                   <li key={i}>{dist.district_name}</li>
                 ))
               : ""}
           </ul>
+            </div>
+          
         </div>
       </div>
     </React.Fragment>

@@ -12,6 +12,7 @@ import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
 import MenuIcon from "@material-ui/icons/Menu";
 import DataUsageIcon from "@material-ui/icons/DataUsage";
+import HealingIcon from '@material-ui/icons/Healing';
 
 const useStyles = makeStyles({
   list: {
@@ -66,18 +67,14 @@ export default function Sidebar() {
           </ListItemIcon>{" "}
           Covid Numbers
         </Button>
+        <Button href="https://selfregistration.cowin.gov.in/" target="_blank">
+          <ListItemIcon>
+            <HealingIcon />
+          </ListItemIcon>{" "}
+          Register at Cowin
+        </Button>
       </List>
       <Divider />
-      <List>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
     </div>
   );
 

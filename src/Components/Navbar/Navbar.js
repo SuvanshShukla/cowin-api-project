@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
               <Sidebar/> 
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              Cowin Check
+              Vaccine Check
             </Typography>
             <Button color="inherit" href="https://github.com/SuvanshShukla" target="_blank">My GitHub</Button>
           </Toolbar>
