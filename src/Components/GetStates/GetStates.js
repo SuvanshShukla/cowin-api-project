@@ -4,6 +4,7 @@ import axios from "axios";
 import { TextField, Button } from "@material-ui/core";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import clsx from "clsx";
+import Tooltip from '@material-ui/core/Tooltip';
 
 //you need to install dotenv using npm then import and configure like below
 import dotenv from "dotenv";
@@ -111,29 +112,33 @@ function GetState() {
           <div className={classes.formDiv}>
           <h1><u>Vaccine Check</u></h1>
             <form autoComplete="on">
-              <TextField
-                label="Enter State"
-                id="outlined-start-adornment"
-                className={clsx(classes.margin, classes.textField)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start"></InputAdornment>
-                  ),
-                }}
-                variant="outlined"
-                value={name}
-                error={!foundState}
-                onChange={(e) => {getStateName(e)}}
-              />
+              <Tooltip title="Enter the State Name to find out more" placement="right" arrow>
+                <TextField
+                  label="Enter State"
+                  id="outlined-start-adornment"
+                  className={clsx(classes.margin, classes.textField)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start"></InputAdornment>
+                    ),
+                  }}
+                  variant="outlined"
+                  value={name}
+                  error={!foundState}
+                  onChange={(e) => {getStateName(e)}}
+                />
+              </Tooltip>
             </form>
             <br />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => checkStateName(districts)}
-            >
-              Click Me!
-            </Button>
+            <Tooltip title="Click to Find all Districts in the State" arrow>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => checkStateName(districts)}
+              >
+                Click Me!
+              </Button>
+            </Tooltip>
             <ul>
             {districts != null
               ? districts.map((dist, i) => (

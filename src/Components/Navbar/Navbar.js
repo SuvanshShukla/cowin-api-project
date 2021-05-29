@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Sidebar from "../Sidebar/Sidebar";
+import GitHubIcon from '@material-ui/icons/GitHub';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
             <Typography variant="h6" className={classes.title}>
               Vaccine Check
             </Typography>
-            <Button color="inherit" href="https://github.com/SuvanshShukla" target="_blank">My GitHub</Button>
+            <Button color="inherit" href="https://github.com/SuvanshShukla" target="_blank"> <GitHubIcon/> &nbsp; My GitHub</Button>
           </Toolbar>
         </AppBar>
     </div>
