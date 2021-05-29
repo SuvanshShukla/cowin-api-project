@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
 import classes from "./GetStates.module.css";
 import axios from "axios";
-import { TextField, Button } from "@material-ui/core";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import {
+  TextField,
+  Button,
+  FormControl,
+  MenuItem,
+  Select,
+  FormHelperText,
+  InputAdornment,
+  Tooltip,
+} from "@material-ui/core";
 import clsx from "clsx";
-import Tooltip from '@material-ui/core/Tooltip';
 
 //you need to install dotenv using npm then import and configure like below
 import dotenv from "dotenv";
@@ -25,6 +32,7 @@ function GetState() {
   const [name, setName] = useState("");
   const [districts, setDistricts] = useState();
   const [foundState, setFoundState] = useState(true); //the initial value of foundState is true
+  const [field, setField] = useState('');
 
   //we use this to get state names the first time it the component mounts
   useEffect(() => {
@@ -53,6 +61,23 @@ function GetState() {
       });
   }; */
 
+  const handleFieldChange = (event) => {
+    setField(event.target.value);
+    console.log(field);
+  };
+
+  const setSearchFunction = () => {
+    if(field === 'State'){
+      checkStateName(name)
+    }
+    else if( field === 'District'){
+      console.log("District");
+    }
+    else if(field === 'Zip Code') {
+      console.log("Zip Code");
+    }
+  }
+
   const getStateName = (e) => {
     let stateName = e.target.value;
     //the little bit of code here is used to automatically capitalize the first letter
@@ -61,7 +86,7 @@ function GetState() {
 
   const checkStateName = (a) => {
     //checks each state with the state name entered by the user
-    setFoundState(false)
+    setFoundState(false);
     info.forEach((element) => {
       if (element.state_name === name) {
         console.log(name);
@@ -99,7 +124,7 @@ function GetState() {
       oBackgroundSize: "cover",
       backgroundImage: "url(" + y + ")",
       backgroundSize: "cover",
-      backgroundRepeat: "no-repeat", 
+      backgroundRepeat: "no-repeat",
       minHeight: "120vh",
       // overflow: "visible"
     };
@@ -110,11 +135,35 @@ function GetState() {
       <div style={divbkg}>
         <div className={classes.wrapper}>
           <div className={classes.formDiv}>
-          <h1><u>Vaccine Check</u></h1>
+            <h1>
+              <u>Vaccine Check</u>
+            </h1>
             <form autoComplete="on">
-              <Tooltip title="Enter the State Name to find out more" placement="right" arrow>
+              <FormControl>
+                <Select
+                  value={field}
+                  onChange={handleFieldChange}
+                  displayEmpty
+                  // className={classes.selectEmpty}
+                  inputProps={{ "aria-label": "Without label" }}
+                >
+                  <MenuItem value="" disabled>
+                    Select
+                  </MenuItem>
+                  <MenuItem value={"State"}>State</MenuItem>
+                  <MenuItem value={"District"}>District</MenuItem>
+                  <MenuItem value={"Zip Code"}>Zip Code</MenuItem>
+                </Select>
+                <FormHelperText>Enter Field of Search</FormHelperText>
+              </FormControl>
+              &nbsp; &nbsp; &nbsp;
+              <Tooltip
+                title={"Enter " + field + " to find out more"}
+                placement="right"
+                arrow
+              >
                 <TextField
-                  label="Enter State"
+                  label={""+field+""}
                   id="outlined-start-adornment"
                   className={clsx(classes.margin, classes.textField)}
                   InputProps={{
@@ -125,28 +174,32 @@ function GetState() {
                   variant="outlined"
                   value={name}
                   error={!foundState}
-                  onChange={(e) => {getStateName(e)}}
+                  helperText={!foundState?"Incorrect Entry":""}
+                  onChange={(e) => {
+                    getStateName(e);
+                  }}
                 />
               </Tooltip>
             </form>
             <br />
-            <Tooltip title="Click to Find all Districts in the State" arrow>
+            <Tooltip title="Click to get Info" arrow>
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => checkStateName(districts)}
+                onClick={() => setSearchFunction(name)}
               >
                 Click Me!
               </Button>
             </Tooltip>
             <ul>
-            {districts != null
-              ? districts.map((dist, i) => (
-                  <li key={i}>{dist.district_name}</li>
-                ))
-              : ""}
-          </ul>
-            </div>
+              {districts != null
+                ? districts.map((dist, i) => (
+                    <li key={i}>{dist.district_name}</li>
+                  ))
+                : ""}
+            </ul>
+          <hr />
+          </div>
         </div>
       </div>
     </div>

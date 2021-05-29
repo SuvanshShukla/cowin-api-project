@@ -31,3 +31,9 @@
       background: rgba(255, 255, 255, 0.73); /* the fourth number determines alpha or the opacity of the color */
       border-radius: 10px;
   }
+
+  .zzz {
+      border: 2px solid silver;
+      margin: 2px;
+  }
+
