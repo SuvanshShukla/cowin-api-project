@@ -109,11 +109,15 @@ function GetState() {
   const handleFieldChange = (event) => {
     setField(event.target.value);
     // console.log(field);
+    setTimeout(field, 0);
+    setSearchFunction()
+    console.log(field);
   };
 
   const setSearchFunction = () => {
     if (field === "State") {
-      checkStateName(name);
+      // checkStateName(name);
+      setField("Go")
     } else if (field === "District") {
       console.log("District");
     } else if (field === "Zip Code") {
@@ -127,40 +131,26 @@ function GetState() {
     setName(input.charAt(0).toUpperCase() + input.slice(1));
   };
 
-  const checkStateName = (a) => {
+  const checkStateName = () => {
+    let match = "";
     //checks each state with the state name entered by the user
-    setFoundState(false);
-    states.forEach((element) => {
-      if (element.state_name === name) {
-        console.log(name);
-        //here if the state is found then the state will be set to true
-        setFoundState(true);
-        let district_id = element.state_id;
-        axios
-          .get(
-            "https://cdn-api.co-vin.in/api/v2/admin/location/districts/" +
-              district_id
-          )
-          .then((res) => {
-            a = res.data.districts;
-            // setDistricts(a);
-            // setTimeout(console.log("HERE!"), 5000);
-            console.log(a);
-            // setTimeout(districts, 0)
-            // console.log(districts);
-            // setComponent(<DistrictsAccordion accdistricts={a} />);
-            setComponent(a);
-          });
+    for(let i = 0; i<states.length; i++){
+      if(i.state_name === name){
+        match = i.state_id
       }
-    });
-    // setDistricts(a)
-    // setComponent(<DistrictsAccordion accdistricts={districts} />);
-    // if(foundState){setFoundState(true);} else{setFoundState(false)}
-    /* if(foundState){
-      console.log('here!!');
-      let tag = document.getElementById("standard-basic");
-      if() 
-    }*/
+    }
+
+    if(match!==""){
+      axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + match).then((res) => {
+        console.log(res.data.districts);
+        setDistricts(res.data.districts)
+        // setFoundState(true)
+        //  setComponent(<DistrictsAccordion accdistricts={districts}/>)
+      })
+    } else{
+      setFoundState(false);
+    }
+    setComponent(<DistrictsAccordion accdistricts={districts}/>)
   };
 
   const makeUrl = () => {
@@ -179,17 +169,6 @@ function GetState() {
       // overflow: "visible"
     };
   };
-
-  const showThings = () => {
-    let x;
-    setTimeout(setFoundState, 0)
-    setDistricts(accordionComponent);
-    if(districts!==undefined){
-      x = <DistrictsAccordion accdistricts={districts} />
-    }
-    else {x = ""}        
-    return x;
-  }
 
   return (
     <div>
@@ -248,23 +227,24 @@ function GetState() {
             >
               <span>
                 <Button
-                  disabled={field === "" ? true : false}
+                  disabled={field === "Go" ? true : false}
                   variant="contained"
                   color="primary"
-                  onClick={() => setSearchFunction(name)}
+                  onClick={() => checkStateName(name)}
                 >
                   Click Me!
                 </Button>
               </span>
             </Tooltip>
             <hr />
-            {/* <ul>
+           {/*  <ul>
               {districts != null
                 ? districts.map((dist, i) => (
                     <li key={i}>{dist.district_name}</li>
                   ))
                 : ""}
             </ul> */}
+            {districts !== undefined ? accordionComponent : ""}
             {/* {console.log(districts)} */}
             {/* {showThings()} */}
           </div>
