@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import classes from "./GetStates.module.css";
 import axios from "axios";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import {
   TextField,
   Button,
@@ -44,7 +44,8 @@ function GetState() {
   const [states, setStates] = useState();
   const [name, setName] = useState("");
   const [districts, setDistricts] = useState([]);
-  const [foundState, setFoundState] = useState(true); //the initial value of foundState is true
+  //the initial value of foundState is true so no error is shown when we start typing
+  const [foundState, setFoundState] = useState(true); 
   const [field, setField] = useState("");
   const [currentDate, setCurrentDate] = useState();
 
@@ -67,17 +68,31 @@ function GetState() {
       .catch((err) => {
         console.log(err);
       });
-
   }, []);
 
-  const getDistrictCentersbyCalendar = (a) => {
-    let current = new Date()
-    let addOne = current.getMonth() + 1
-    setCurrentDate(current.getDate()+"-"+ addOne +"-"+current.getFullYear())
-    axios.get("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id="+a+"&date="+currentDate).then((res)=> {
-      console.log(res.data);
-    })
-  }
+  //use this function to make a proper date string which can be used in the API call functions
+  const makeCurrentDate = () => {
+    let current = new Date();
+    let addOne = current.getMonth() + 1;
+    setCurrentDate(
+      current.getDate() + "-" + addOne + "-" + current.getFullYear()
+    );
+  };
+
+  //use this function to get district's center's info for the next 7 days, it uses district_id and current date
+  const getDistrictCentersByCalendar = (a) => {
+    makeCurrentDate();
+    axios
+      .get(
+        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=" +
+          a +
+          "&date=" +
+          currentDate
+      )
+      .then((res) => {
+        console.log(res.data);
+      });
+  };
 
   /* const findByDistrict = (a) => {
     axios
@@ -217,16 +232,18 @@ function GetState() {
               </span>
             </Tooltip>
             <hr />
-            {districts.length>0
+            {districts.length > 0
               ? districts.map((dist, i) => (
                   <Accordion key={i}>
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
                       id="panel1a-header"
-                      onClick={() => getDistrictCentersbyCalendar(dist.district_id)}
+                      onClick={() =>
+                        getDistrictCentersByCalendar(dist.district_id)
+                      }
                     >
-                      <Typography /* className={classes.heading} */ >
+                      <Typography /* className={classes.heading} */>
                         {dist.district_name}
                       </Typography>
                     </AccordionSummary>
