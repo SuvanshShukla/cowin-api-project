@@ -38,15 +38,20 @@ dotenv.config();
     * and it'll load the district's info accordingly
   this tried the above already
 
-  //i've tried to asynchronously run the DistrictsAccordion component and it still won't run properly so i will just map it here
+  ---i've tried to asynchronously run the DistrictsAccordion component and it still won't run properly so i will just map it here
 
-  ? so heres how you can solve it:
-  * you basically need to set the state only once
-  * so instead of setting the state in the loop set it out side of the loop
-  * do this by comparing the states in the list then if state gets found set a var equal to the returned val
-  * then perform the API fetch
-  * then set the state
-  * then set the tag and render the component!
+  ---? so heres how you can solve it:
+  --- you basically need to set the state only once
+  --- so instead of setting the state in the loop set it out side of the loop
+  --- do this by comparing the states in the list then if state gets found set a var equal to the returned val
+  --- then perform the API fetch
+  --- then set the state
+  --- then set the tag and render the component!
+
+  TODO 
+   * what I need to do now is remake all the fucntions and how I call them, especially the setField and checkState functions
+   * it might be better if I rewrite all the functions instead
+  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
@@ -108,20 +113,21 @@ function GetState() {
 
   const handleFieldChange = (event) => {
     setField(event.target.value);
+    // setTimeout(field, 0);
     // console.log(field);
-    setTimeout(field, 0);
     setSearchFunction()
-    console.log(field);
+    // console.log(field);
   };
 
   const setSearchFunction = () => {
     if (field === "State") {
       // checkStateName(name);
-      setField("Go")
+      // setField("Go")
+      console.log("field is " + field)
     } else if (field === "District") {
-      console.log("District");
+      console.log("field is " + field)
     } else if (field === "Zip Code") {
-      console.log("Zip Code");
+      console.log("field is " + field)
     }
   };
 
@@ -150,7 +156,7 @@ function GetState() {
     } else{
       setFoundState(false);
     }
-    setComponent(<DistrictsAccordion accdistricts={districts}/>)
+    // setComponent(<DistrictsAccordion accdistricts={districts}/>)
   };
 
   const makeUrl = () => {
@@ -186,7 +192,7 @@ function GetState() {
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
                 >
-                  <MenuItem value="" disabled>
+                  <MenuItem disabled>
                     Select
                   </MenuItem>
                   <MenuItem value={"State"}>State</MenuItem>
@@ -225,16 +231,16 @@ function GetState() {
               title={field === "" ? "Please Select Field" : "Click to get Info"}
               arrow
             >
-              <span>
-                <Button
-                  disabled={field === "Go" ? true : false}
-                  variant="contained"
-                  color="primary"
-                  onClick={() => checkStateName(name)}
-                >
-                  Click Me!
-                </Button>
-              </span>
+              
+              <Button
+                disabled={field === "Go" ? true : false}
+                variant="contained"
+                color="primary"
+                onClick={() => checkStateName(name)}
+              >
+                Click Me!
+              </Button>
+              
             </Tooltip>
             <hr />
            {/*  <ul>

@@ -1,5 +1,4 @@
 import React from "react";
-import AboutModal from '../AboutModal/AboutModal';
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from '@material-ui/core/Button';
@@ -11,7 +10,9 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import MenuIcon from "@material-ui/icons/Menu";
 import DataUsageIcon from "@material-ui/icons/DataUsage";
 import HealingIcon from '@material-ui/icons/Healing';
+import GitHubIcon from '@material-ui/icons/GitHub';
 import InfoIcon from '@material-ui/icons/Info';
+import AboutDialog from "../AboutDialog/AboutDialog";
 
 /* 
 
@@ -27,7 +28,6 @@ const useStyles = makeStyles({
     width: "auto",
   },
   bottomItem: {
-    background: 'aliceblue',
     position: 'fixed',
     bottom: '1px',
     width: 250
@@ -87,15 +87,9 @@ export default function Sidebar() {
       </List>
       <Divider />
       <div className={classes.bottomItem}>
-      
-        
-        <Button>
-              <InfoIcon />
-            <ListItemIcon>
-          <AboutModal/>
-            </ListItemIcon>
-        </Button>
-        
+      <Divider />
+      <Button color="inherit" href="https://github.com/SuvanshShukla" target="_blank"> <GitHubIcon/> &nbsp; My GitHub</Button>
+
       </div>
     </div>
   );
@@ -106,7 +100,6 @@ export default function Sidebar() {
         <React.Fragment key={anchor}>
           <MenuIcon onClick={toggleDrawer(anchor, true)}>{anchor}</MenuIcon>
           <Drawer
-            variant="persistent"
             anchor={anchor}
             open={state[anchor]}
             onClose={toggleDrawer(anchor, false)}
