@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import DistrictsAccordion from "../DistrictsAccordion/DistrictsAccordion";
 import classes from "./GetStates.module.css";
 import axios from "axios";
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {
   TextField,
   Button,
@@ -9,12 +9,11 @@ import {
   MenuItem,
   Select,
   FormHelperText,
-  InputAdornment,
   Tooltip,
-  // Accordion,
-  // AccordionSummary,
-  // AccordionDetails,
-  // Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
 } from "@material-ui/core";
 import clsx from "clsx";
 // import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -27,30 +26,7 @@ dotenv.config();
 
 /* 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  TODO 
-    * You can either pre-load all the states and districts and send it to child components
-    * Or you can find out a way to send the synchronously loaded district data to the child component
-    * add an about page at the bottom of the side-drawer
-    
-  ! what i'm thinking is ...
-    * i'll pre-load the list as a component everytime the page reloads
-    * then when the user enters a state's name i'll send it to the component
-    * and it'll load the district's info accordingly
-  this tried the above already
-
-  ---i've tried to asynchronously run the DistrictsAccordion component and it still won't run properly so i will just map it here
-
-  ---? so heres how you can solve it:
-  --- you basically need to set the state only once
-  --- so instead of setting the state in the loop set it out side of the loop
-  --- do this by comparing the states in the list then if state gets found set a var equal to the returned val
-  --- then perform the API fetch
-  --- then set the state
-  --- then set the tag and render the component!
-
-  TODO 
-   * what I need to do now is remake all the fucntions and how I call them, especially the setField and checkState functions
-   * it might be better if I rewrite all the functions instead
+  this-> i ultimately had to delete DistrictAccordion component and move the map method here.
   
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
@@ -67,10 +43,9 @@ const bkgimgs = [
 function GetState() {
   const [states, setStates] = useState();
   const [name, setName] = useState("");
-  const [districts, setDistricts] = useState();
+  const [districts, setDistricts] = useState([]);
   const [foundState, setFoundState] = useState(true); //the initial value of foundState is true
   const [field, setField] = useState("");
-  const [accordionComponent, setComponent] = useState();
 
   //we use this to get state names the first time it the component mounts
   useEffect(() => {
@@ -92,12 +67,9 @@ function GetState() {
         console.log(err);
       });
 
-    // setComponent(<DistrictsAccordion states={states}/>);
   }, []);
 
-  /* useEffect(() => {
-    setComponent(accordionComponent)
-  }, [accordionComponent]) */
+
 
   /* const findByDistrict = (a) => {
     axios
@@ -113,21 +85,18 @@ function GetState() {
 
   const handleFieldChange = (event) => {
     setField(event.target.value);
-    // setTimeout(field, 0);
-    // console.log(field);
-    setSearchFunction()
-    // console.log(field);
+    console.log(field);
   };
 
-  const setSearchFunction = () => {
-    if (field === "State") {
-      // checkStateName(name);
+  const setSearchFunction = (a) => {
+    if (a === "State") {
+      checkStateName(name);
       // setField("Go")
-      console.log("field is " + field)
-    } else if (field === "District") {
-      console.log("field is " + field)
-    } else if (field === "Zip Code") {
-      console.log("field is " + field)
+      console.log("field is " + a);
+    } else if (a === "District") {
+      console.log("field is " + a);
+    } else if (a === "Zip Code") {
+      console.log("field is " + a);
     }
   };
 
@@ -135,28 +104,33 @@ function GetState() {
     let input = e.target.value;
     //the little bit of code here is used to automatically capitalize the first letter
     setName(input.charAt(0).toUpperCase() + input.slice(1));
+    console.log(name);
   };
 
-  const checkStateName = () => {
+  const checkStateName = (x) => {
+    let temp;
     let match = "";
     //checks each state with the state name entered by the user
-    for(let i = 0; i<states.length; i++){
-      if(i.state_name === name){
-        match = i.state_id
+    for (let i = 0; i < states.length; i++) {
+      if (states[i].state_name === x) {
+        match = states[i].state_id;
+        console.log(match);
       }
     }
 
-    if(match!==""){
-      axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + match).then((res) => {
-        console.log(res.data.districts);
-        setDistricts(res.data.districts)
-        // setFoundState(true)
-        //  setComponent(<DistrictsAccordion accdistricts={districts}/>)
-      })
-    } else{
+    if (match !== "") {
+      axios
+        .get(
+          "https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + match
+        )
+        .then((res) => {
+          temp = res.data.districts;
+          console.log(temp);
+          setDistricts(temp);
+        });
+    } else {
       setFoundState(false);
     }
-    // setComponent(<DistrictsAccordion accdistricts={districts}/>)
   };
 
   const makeUrl = () => {
@@ -165,14 +139,10 @@ function GetState() {
     y = new URL(bkgimgs[x]);
     // console.log(y);
     divbkg = {
-      /*  webkitBackgroundSize: "cover",
-      mozBackgroundSize: "cover",
-      oBackgroundSize: "cover", */
       backgroundImage: "url(" + y + ")",
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
       minHeight: "120vh",
-      // overflow: "visible"
     };
   };
 
@@ -188,11 +158,11 @@ function GetState() {
               <FormControl>
                 <Select
                   value={field}
-                  onChange={handleFieldChange}
+                  onChange={(e) => handleFieldChange(e)}
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
                 >
-                  <MenuItem disabled>
+                  <MenuItem value="" disabled>
                     Select
                   </MenuItem>
                   <MenuItem value={"State"}>State</MenuItem>
@@ -211,11 +181,6 @@ function GetState() {
                   label={"" + field + ""}
                   id="outlined-start-adornment"
                   className={clsx(classes.margin, classes.textField)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start"></InputAdornment>
-                    ),
-                  }}
                   variant="outlined"
                   value={name}
                   error={!foundState}
@@ -231,28 +196,39 @@ function GetState() {
               title={field === "" ? "Please Select Field" : "Click to get Info"}
               arrow
             >
-              
               <Button
-                disabled={field === "Go" ? true : false}
+                disabled={field === "" ? true : false}
                 variant="contained"
                 color="primary"
-                onClick={() => checkStateName(name)}
+                //you can't remove the arrow function because the function will run the moment the component loads
+                onClick={() => setSearchFunction(field)}
               >
                 Click Me!
               </Button>
-              
             </Tooltip>
             <hr />
-           {/*  <ul>
-              {districts != null
-                ? districts.map((dist, i) => (
-                    <li key={i}>{dist.district_name}</li>
-                  ))
-                : ""}
-            </ul> */}
-            {districts !== undefined ? accordionComponent : ""}
-            {/* {console.log(districts)} */}
-            {/* {showThings()} */}
+            {districts.length>0
+              ? districts.map((dist, i) => (
+                  <Accordion key={i}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
+                      <Typography /* className={classes.heading} */>
+                        {dist.district_name}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Suspendisse malesuada lacus ex, sit amet blandit leo
+                        lobortis eget.
+                      </Typography>
+                    </AccordionDetails>
+                  </Accordion>
+                ))
+              : ""}
           </div>
         </div>
       </div>

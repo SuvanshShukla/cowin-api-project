@@ -20,7 +20,7 @@ export default function AboutDialog() {
 
   return (
     <div>
-      <Button variant="outlined" color="purple" onClick={handleClickOpen}>
+      <Button variant="outlined" onClick={handleClickOpen}>
           <InfoIcon/> &nbsp;
         About
       </Button>
