@@ -46,8 +46,9 @@ function GetState() {
   const [districts, setDistricts] = useState([]);
   const [foundState, setFoundState] = useState(true); //the initial value of foundState is true
   const [field, setField] = useState("");
+  const [currentDate, setCurrentDate] = useState();
 
-  //we use this to get state names the first time it the component mounts
+  //we use this to get state names the first time the component mounts
   useEffect(() => {
     makeUrl();
     let incomingData;
@@ -69,7 +70,14 @@ function GetState() {
 
   }, []);
 
-
+  const getDistrictCentersbyCalendar = (a) => {
+    let current = new Date()
+    let addOne = current.getMonth() + 1
+    setCurrentDate(current.getDate()+"-"+ addOne +"-"+current.getFullYear())
+    axios.get("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id="+a+"&date="+currentDate).then((res)=> {
+      console.log(res.data);
+    })
+  }
 
   /* const findByDistrict = (a) => {
     axios
@@ -196,15 +204,17 @@ function GetState() {
               title={field === "" ? "Please Select Field" : "Click to get Info"}
               arrow
             >
-              <Button
-                disabled={field === "" ? true : false}
-                variant="contained"
-                color="primary"
-                //you can't remove the arrow function because the function will run the moment the component loads
-                onClick={() => setSearchFunction(field)}
-              >
-                Click Me!
-              </Button>
+              <span>
+                <Button
+                  disabled={field === "" ? true : false}
+                  variant="contained"
+                  color="primary"
+                  //you can't remove the arrow function because the function will run the moment the component loads
+                  onClick={() => setSearchFunction(field)}
+                >
+                  Click Me!
+                </Button>
+              </span>
             </Tooltip>
             <hr />
             {districts.length>0
@@ -214,8 +224,9 @@ function GetState() {
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
                       id="panel1a-header"
+                      onClick={() => getDistrictCentersbyCalendar(dist.district_id)}
                     >
-                      <Typography /* className={classes.heading} */>
+                      <Typography /* className={classes.heading} */ >
                         {dist.district_name}
                       </Typography>
                     </AccordionSummary>

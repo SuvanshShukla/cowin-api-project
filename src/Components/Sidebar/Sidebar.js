@@ -11,8 +11,6 @@ import MenuIcon from "@material-ui/icons/Menu";
 import DataUsageIcon from "@material-ui/icons/DataUsage";
 import HealingIcon from '@material-ui/icons/Healing';
 import GitHubIcon from '@material-ui/icons/GitHub';
-import InfoIcon from '@material-ui/icons/Info';
-import AboutDialog from "../AboutDialog/AboutDialog";
 
 /* 
 
