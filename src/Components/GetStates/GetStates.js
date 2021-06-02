@@ -14,12 +14,17 @@ import {
   AccordionSummary,
   AccordionDetails,
   Typography,
+  // TableContainer,
+  // TableHead,
+  // TableRow,
+  // TableCell,
 } from "@material-ui/core";
 import clsx from "clsx";
 // import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 //you need to install dotenv using npm then import and configure like below
 import dotenv from "dotenv";
+import DistrictCentersDialog from "../DistrictCentersDialog/DistrictCentersDialog";
 dotenv.config();
 //console.log(process.env.REACT_APP_STATES_API); //the REACT_APP prefix is necessary for naming any env variable
 //also remember that, whenever you add a new environment variable you need to restart npm start
@@ -27,11 +32,14 @@ dotenv.config();
 /* 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   this-> i ultimately had to delete DistrictAccordion component and move the map method here.
+
+  todo:
+  *make all the functions for the API calls and show all obtained data
   
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-var x, y, divbkg;
+var x, y, divbkg, kkk;
 const bkgimgs = [
   "https://images.unsplash.com/photo-1532375810709-75b1da00537c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1510&q=80",
   "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1502&q=80",
@@ -48,6 +56,7 @@ function GetState() {
   const [foundState, setFoundState] = useState(true); 
   const [field, setField] = useState("");
   const [currentDate, setCurrentDate] = useState();
+  const [districtCenters, setDistrictCenters] = useState([]);
 
   //we use this to get state names the first time the component mounts
   useEffect(() => {
@@ -80,17 +89,19 @@ function GetState() {
   };
 
   //use this function to get district's center's info for the next 7 days, it uses district_id and current date
-  const getDistrictCentersByCalendar = (a) => {
+  const getDistrictCenters = (a) => {
+    console.log(a);
     makeCurrentDate();
     axios
       .get(
-        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=" +
+        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=" +
           a +
           "&date=" +
           currentDate
       )
       .then((res) => {
         console.log(res.data);
+        setDistrictCenters(res.data.sessions)
       });
   };
 
@@ -189,7 +200,7 @@ function GetState() {
                     Select
                   </MenuItem>
                   <MenuItem value={"State"}>State</MenuItem>
-                  <MenuItem value={"District"}>District</MenuItem>
+                  {/* <MenuItem value={"District"}>District</MenuItem> */}
                   <MenuItem value={"Zip Code"}>Zip Code</MenuItem>
                 </Select>
                 <FormHelperText>Enter Field of Search</FormHelperText>
@@ -232,6 +243,8 @@ function GetState() {
               </span>
             </Tooltip>
             <hr />
+            {/* <p>The following are all the available sessions categorized by districts</p>
+            <p>Each </p> */}
             {districts.length > 0
               ? districts.map((dist, i) => (
                   <Accordion key={i}>
@@ -239,20 +252,15 @@ function GetState() {
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
                       id="panel1a-header"
-                      onClick={() =>
-                        getDistrictCentersByCalendar(dist.district_id)
-                      }
+                      // onChange={() =>{ kkk = dist.district_id}}
                     >
                       <Typography /* className={classes.heading} */>
                         {dist.district_name}
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <Typography>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Suspendisse malesuada lacus ex, sit amet blandit leo
-                        lobortis eget.
-                      </Typography>
+                      <DistrictCentersDialog d_id={dist.district_id} x={"this is reading"}/>
+                      {/* {console.log()} */}
                     </AccordionDetails>
                   </Accordion>
                 ))
