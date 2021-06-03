@@ -29,22 +29,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+//used to emulate the slide-in animation effect
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function DistrictCentersDialog(props) {
+  //setting up states using Hooks
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  // const [dID] = useState(props.d_id);
-  // const [currentDate, setCurrentDate] = useState();
   const [districtCenters, setDistrictCenters] = useState([]);
-  const [flag, setFlag] = useState(false);
-  // const [currentdate, setCurrentDate] = useState();
 
-  // console.log("dID is ")
-  // console.log(dID)
-  // dID.current = props;
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -53,17 +49,8 @@ export default function DistrictCentersDialog(props) {
     setOpen(false);
   };
 
- 
 
-  /* const makeCurrentDate = () => {
-    let current = new Date();
-    let addOne = current.getMonth() + 1;
-    var c = current.getDate() + "-" + addOne + "-" + current.getFullYear()
-    setCurrentDate(c);
-    console.log(current.getDate() + "-" + addOne + "-" + current.getFullYear())
-    console.log(currentDate);
-  }; */
-
+  //what you need to be careful of is to just directly use any info from the parent component sent to the child component do try to save into a state then use it
   const getCentersByDistrict = () => {
     let current = new Date();
     let addOne = current.getMonth() + 1;
@@ -73,17 +60,13 @@ export default function DistrictCentersDialog(props) {
       props.d_id +
       "&date=" +
       c;
-    // console.log(url);
     axios.get(url).then((res) => {
-      // console.log(res.data);
       let r = res.data.sessions;
       setDistrictCenters(r);
-      setFlag(true);
     });
   };
 
-  // console.log(flag);
-  // console.log(districtCenters);
+
   return (
     <div>
       <Button
@@ -156,11 +139,6 @@ export default function DistrictCentersDialog(props) {
                 : <LinearProgress style={{width: "100%"}}/>}
             </Table>
           </TableContainer>
-          
-          {/* <ListItem button>
-            <ListItemText primary="Phone ringtone" secondary="Titania" />
-          </ListItem>
-          <Divider /> */}
         </List>
       </Dialog>
     </div>

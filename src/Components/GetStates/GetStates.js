@@ -34,7 +34,7 @@ dotenv.config();
   this-> i ultimately had to delete DistrictAccordion component and move the map method here.
 
   todo:
-  *make all the functions for the API calls and show all obtained data
+  * make all the functions for the API calls and show all obtained data
   
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
@@ -71,7 +71,7 @@ function GetState() {
           setStates(incomingData);
           // console.log(incomingData);
         } else {
-          // console.log("incoming Data is null");
+          console.log("incoming Data is null");
         }
       })
       .catch((err) => {
@@ -125,7 +125,6 @@ function GetState() {
   const setSearchFunction = (a) => {
     if (a === "State") {
       checkStateName(name);
-      // setField("Go")
       // console.log("field is " + a);
     } else if (a === "District") {
       // console.log("field is " + a);
@@ -138,7 +137,6 @@ function GetState() {
     let input = e.target.value;
     //the little bit of code here is used to automatically capitalize the first letter
     setName(input.charAt(0).toUpperCase() + input.slice(1));
-    // console.log(name);
   };
 
   const checkStateName = (x) => {
@@ -148,7 +146,6 @@ function GetState() {
     for (let i = 0; i < states.length; i++) {
       if (states[i].state_name === x) {
         match = states[i].state_id;
-        // console.log(match);
       }
     }
 
@@ -159,9 +156,7 @@ function GetState() {
         )
         .then((res) => {
           temp = res.data.districts;
-          // console.log(temp);
           setDistricts(temp);
-          // console.log(districts);
           setFoundState(true)
         });
     } else {
@@ -171,9 +166,7 @@ function GetState() {
 
   const makeUrl = () => {
     x = Math.floor(Math.random() * bkgimgs.length);
-    // console.log(x);
     y = new URL(bkgimgs[x]);
-    // console.log(y);
     divbkg = {
       backgroundImage: "url(" + y + ")",
       backgroundSize: "cover",
@@ -254,15 +247,13 @@ function GetState() {
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
                       id="panel1a-header"
-                      // onChange={() =>{ kkk = dist.district_id}}
                     >
-                      <Typography /* className={classes.heading} */>
+                      <Typography>
                         {dist.district_name}
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                       <DistrictCentersDialog d_id={dist.district_id} d_name={dist.district_name}/>
-                      {/* {console.log()} */}
                     </AccordionDetails>
                   </Accordion>
                 ))
