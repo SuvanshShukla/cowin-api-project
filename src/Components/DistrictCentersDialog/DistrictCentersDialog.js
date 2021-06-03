@@ -36,7 +36,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function DistrictCentersDialog(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [dID] = useState(props.d_id);
+  // const [dID] = useState(props.d_id);
   // const [currentDate, setCurrentDate] = useState();
   const [districtCenters, setDistrictCenters] = useState([]);
   const [flag, setFlag] = useState(false);
@@ -70,20 +70,20 @@ export default function DistrictCentersDialog(props) {
     var c = current.getDate() + "-" + addOne + "-" + current.getFullYear();
     var url =
       "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=" +
-      dID +
+      props.d_id +
       "&date=" +
       c;
-    console.log(url);
+    // console.log(url);
     axios.get(url).then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       let r = res.data.sessions;
       setDistrictCenters(r);
       setFlag(true);
     });
   };
 
-  console.log(flag);
-  console.log(districtCenters);
+  // console.log(flag);
+  // console.log(districtCenters);
   return (
     <div>
       <Button

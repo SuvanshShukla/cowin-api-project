@@ -69,9 +69,9 @@ function GetState() {
         incomingData = res.data.states;
         if (incomingData != null) {
           setStates(incomingData);
-          console.log(incomingData);
+          // console.log(incomingData);
         } else {
-          console.log("incoming Data is null");
+          // console.log("incoming Data is null");
         }
       })
       .catch((err) => {
@@ -126,11 +126,11 @@ function GetState() {
     if (a === "State") {
       checkStateName(name);
       // setField("Go")
-      console.log("field is " + a);
+      // console.log("field is " + a);
     } else if (a === "District") {
-      console.log("field is " + a);
+      // console.log("field is " + a);
     } else if (a === "Zip Code") {
-      console.log("field is " + a);
+      // console.log("field is " + a);
     }
   };
 
@@ -138,7 +138,7 @@ function GetState() {
     let input = e.target.value;
     //the little bit of code here is used to automatically capitalize the first letter
     setName(input.charAt(0).toUpperCase() + input.slice(1));
-    console.log(name);
+    // console.log(name);
   };
 
   const checkStateName = (x) => {
@@ -148,7 +148,7 @@ function GetState() {
     for (let i = 0; i < states.length; i++) {
       if (states[i].state_name === x) {
         match = states[i].state_id;
-        console.log(match);
+        // console.log(match);
       }
     }
 
@@ -159,8 +159,9 @@ function GetState() {
         )
         .then((res) => {
           temp = res.data.districts;
-          console.log(temp);
+          // console.log(temp);
           setDistricts(temp);
+          // console.log(districts);
           setFoundState(true)
         });
     } else {
