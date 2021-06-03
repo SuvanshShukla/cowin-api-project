@@ -39,7 +39,7 @@ dotenv.config();
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-var x, y, divbkg, kkk;
+var x, y, divbkg;
 const bkgimgs = [
   "https://images.unsplash.com/photo-1532375810709-75b1da00537c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1510&q=80",
   "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1502&q=80",
@@ -55,8 +55,8 @@ function GetState() {
   //the initial value of foundState is true so no error is shown when we start typing
   const [foundState, setFoundState] = useState(true); 
   const [field, setField] = useState("");
-  const [currentDate, setCurrentDate] = useState();
-  const [districtCenters, setDistrictCenters] = useState([]);
+  // const [currentDate, setCurrentDate] = useState();
+  // const [districtCenters, setDistrictCenters] = useState([]);
 
   //we use this to get state names the first time the component mounts
   useEffect(() => {
@@ -80,16 +80,16 @@ function GetState() {
   }, []);
 
   //use this function to make a proper date string which can be used in the API call functions
-  const makeCurrentDate = () => {
+ /*  const makeCurrentDate = () => {
     let current = new Date();
     let addOne = current.getMonth() + 1;
     setCurrentDate(
       current.getDate() + "-" + addOne + "-" + current.getFullYear()
     );
-  };
+  }; */
 
   //use this function to get district's center's info for the next 7 days, it uses district_id and current date
-  const getDistrictCenters = (a) => {
+  /* const getDistrictCenters = (a) => {
     console.log(a);
     makeCurrentDate();
     axios
@@ -103,7 +103,7 @@ function GetState() {
         console.log(res.data);
         setDistrictCenters(res.data.sessions)
       });
-  };
+  }; */
 
   /* const findByDistrict = (a) => {
     axios
@@ -161,6 +161,7 @@ function GetState() {
           temp = res.data.districts;
           console.log(temp);
           setDistricts(temp);
+          setFoundState(true)
         });
     } else {
       setFoundState(false);
@@ -259,7 +260,7 @@ function GetState() {
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <DistrictCentersDialog d_id={dist.district_id} x={"this is reading"}/>
+                      <DistrictCentersDialog d_id={dist.district_id} d_name={dist.district_name}/>
                       {/* {console.log()} */}
                     </AccordionDetails>
                   </Accordion>
