@@ -16,6 +16,11 @@ import {
   AccordionSummary,
   AccordionDetails,
   Typography,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableCell,
+  Table,
 } from "@material-ui/core";
 import clsx from "clsx";
 
@@ -48,7 +53,7 @@ const bkgimgs = [
 ];
 
 function GetState() {
-  // let ;
+  
   const [states, setStates] = useState();
   const [name, setName] = useState("");
   const [districts, setDistricts] = useState([]);
@@ -56,6 +61,7 @@ function GetState() {
   const [foundState, setFoundState] = useState(true); 
   const [field, setField] = useState("");
   const [stateDistrictsAccordion, setStateDistrictsAccordion] = useState(null);
+  const [zipCodeCenter, setZipCodeCenter] = useState([]);
   // const [currentDate, setCurrentDate] = useState();
   // const [districtCenters, setDistrictCenters] = useState([]);
 
@@ -78,7 +84,6 @@ function GetState() {
       .catch((err) => {
         console.log(err);
       });
-      console.log('one time');
   }, []);
 
 
@@ -100,6 +105,47 @@ function GetState() {
         </AccordionDetails>
       </Accordion>))
       setStateDistrictsAccordion(v)
+  }, [districts])
+
+  useEffect(() => {
+    let insideData;
+    if(districts.length>0){
+    insideData = (
+    <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Sr No.</TableCell>
+                  <TableCell>Center Id</TableCell>
+                  <TableCell>Center Name</TableCell>
+                  <TableCell>Address</TableCell>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Min Age Limit</TableCell>
+                  <TableCell>Pin Code</TableCell>
+                  <TableCell>Fee Type</TableCell>
+                  <TableCell>Vaccine</TableCell>
+                </TableRow>
+              </TableHead>
+        {districts.map((center, i) => (
+              <TableRow key={i}>
+                <TableCell>{i + 1}</TableCell>
+                <TableCell>{center.center_id}</TableCell>
+                <TableCell>{center.name}</TableCell>
+                <TableCell>{center.address}</TableCell>
+                <TableCell>{center.date}</TableCell>
+                <TableCell>{center.min_age_limit}</TableCell>
+                <TableCell>{center.pincode}</TableCell>
+                <TableCell>{center.fee_type==="Paid"?(center.fee==0 ? "Free": center.fee):center.fee_type}</TableCell>
+                <TableCell>{center.vaccine}</TableCell>
+              </TableRow>
+             ))}
+             </Table>
+      </TableContainer> )
+    }
+    else {
+      insideData = null
+    }
+    setZipCodeCenter(insideData)
   }, [districts])
 
   //use this function to make a proper date string which can be used in the API call functions
@@ -140,6 +186,17 @@ function GetState() {
       });
   }; */
 
+
+  const findSessionByZip = (name) => {
+    let current = new Date();
+    let addOne = current.getMonth() + 1;
+    var c = current.getDate() + "-" + addOne + "-" + current.getFullYear();
+    axios.get("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode="+name+"&date="+c).then((res) => {
+      let data = res.data.sessions
+      setDistricts(data);
+    })
+  }
+
   const handleFieldChange = (event) => {
     setField(event.target.value);
     // console.log(field);
@@ -148,11 +205,10 @@ function GetState() {
   const setSearchFunction = (a) => {
     if (a === "State") {
       checkStateName(name);
-      // console.log("field is " + a);
-    } else if (a === "District") {
-      // console.log("field is " + a);
+      console.log("field is " + a);
     } else if (a === "Zip Code") {
-      // console.log("field is " + a);
+      findSessionByZip(name);
+      console.log("field is " + a);
     }
   };
 
@@ -160,6 +216,7 @@ function GetState() {
     let input = e.target.value;
     //the little bit of code here is used to automatically capitalize the first letter
     setName(input.charAt(0).toUpperCase() + input.slice(1));
+    // console.log(name)
   };
 
   const checkStateName = (x) => {
@@ -197,6 +254,23 @@ function GetState() {
       minHeight: "120vh",
     };
   };
+
+
+  const renderLoader = (field) => {
+    let tempRender
+    switch (field) {
+      case "State":
+         tempRender = stateDistrictsAccordion
+        break;
+      case "Zip Code":
+        tempRender = zipCodeCenter
+        break;
+      default:
+        tempRender = null
+        break;
+    }
+    return tempRender
+  }
 
   return (
     <div>
@@ -262,7 +336,7 @@ function GetState() {
             </Tooltip>
             <hr />
             {/* {console.log(stateDistrictsAccordion)} */}
-            {stateDistrictsAccordion}
+            {renderLoader(field)}
           </div>
         </div>
       </div>
