@@ -48,12 +48,14 @@ const bkgimgs = [
 ];
 
 function GetState() {
+  // let ;
   const [states, setStates] = useState();
   const [name, setName] = useState("");
   const [districts, setDistricts] = useState([]);
   //the initial value of foundState is true so no error is shown when we start typing
   const [foundState, setFoundState] = useState(true); 
   const [field, setField] = useState("");
+  const [stateDistrictsAccordion, setStateDistrictsAccordion] = useState(null);
   // const [currentDate, setCurrentDate] = useState();
   // const [districtCenters, setDistrictCenters] = useState([]);
 
@@ -76,7 +78,29 @@ function GetState() {
       .catch((err) => {
         console.log(err);
       });
+      console.log('one time');
   }, []);
+
+
+  //what the below useEffect does is: it sets up stateDistrictsAccordion everytime districts gets updated!! so theres no lag!!!
+  useEffect(() => {
+    let v = districts.map((dist, i) => (
+      <Accordion key={i}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography>
+            {dist.district_name}
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <DistrictCentersDialog d_id={dist.district_id} d_name={dist.district_name}/>
+        </AccordionDetails>
+      </Accordion>))
+      setStateDistrictsAccordion(v)
+  }, [districts])
 
   //use this function to make a proper date string which can be used in the API call functions
  /*  const makeCurrentDate = () => {
@@ -237,26 +261,8 @@ function GetState() {
               </span>
             </Tooltip>
             <hr />
-            {/* <p>The following are all the available sessions categorized by districts</p>
-            <p>Each </p> */}
-            {districts.length > 0
-              ? districts.map((dist, i) => (
-                  <Accordion key={i}>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <Typography>
-                        {dist.district_name}
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <DistrictCentersDialog d_id={dist.district_id} d_name={dist.district_name}/>
-                    </AccordionDetails>
-                  </Accordion>
-                ))
-              : ""}
+            {/* {console.log(stateDistrictsAccordion)} */}
+            {stateDistrictsAccordion}
           </div>
         </div>
       </div>
