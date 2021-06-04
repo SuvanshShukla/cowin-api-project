@@ -11,6 +11,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import DataUsageIcon from "@material-ui/icons/DataUsage";
 import HealingIcon from '@material-ui/icons/Healing';
 import GitHubIcon from '@material-ui/icons/GitHub';
+import MouseIcon from '@material-ui/icons/Mouse';
 
 /* 
 
@@ -81,6 +82,12 @@ export default function Sidebar() {
             <HealingIcon />
           </ListItemIcon>{" "}
           Register at Cowin
+        </Button>
+        <Button href="https://www.cowin.gov.in/" target="_blank">
+          <ListItemIcon>
+            <MouseIcon />
+          </ListItemIcon>{" "}
+          COWIN Website
         </Button>
       </List>
       <Divider />

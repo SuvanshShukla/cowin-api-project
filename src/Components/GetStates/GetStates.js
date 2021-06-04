@@ -334,6 +334,26 @@ function GetState() {
                 </Button>
               </span>
             </Tooltip>
+            &nbsp;
+            <Tooltip
+              title={field === "" ? "Please Select Field" : "Click to get Info"}
+              arrow
+            >
+              <span>
+                <Button
+                  style={{display: districts.length==0? "none" : null}}
+                  variant="contained"
+                  color="secondary"
+                  //you can't remove the arrow function because the function will run the moment the component loads
+                  onClick={() => {setField("")
+                     setDistricts([])
+                     setName("")
+                    }}
+                >
+                  Clear
+                </Button>
+              </span>
+            </Tooltip>
             <hr />
             {/* {console.log(stateDistrictsAccordion)} */}
             {renderLoader(field)}
