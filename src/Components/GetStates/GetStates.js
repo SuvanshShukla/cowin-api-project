@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import classes from "./GetStates.module.css";
 import axios from "axios";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+
+//import material-ui components
 import {
   TextField,
   Button,
@@ -14,13 +16,10 @@ import {
   AccordionSummary,
   AccordionDetails,
   Typography,
-  // TableContainer,
-  // TableHead,
-  // TableRow,
-  // TableCell,
 } from "@material-ui/core";
 import clsx from "clsx";
-// import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+
+
 
 //you need to install dotenv using npm then import and configure like below
 import dotenv from "dotenv";
@@ -119,7 +118,7 @@ function GetState() {
 
   const handleFieldChange = (event) => {
     setField(event.target.value);
-    console.log(field);
+    // console.log(field);
   };
 
   const setSearchFunction = (a) => {
