@@ -141,6 +141,7 @@ function GetState() {
              ))}
              </Table>
       </TableContainer> )
+      setFoundState(true)
     }
     else {
       insideData = null
@@ -194,6 +195,9 @@ function GetState() {
     axios.get("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode="+name+"&date="+c).then((res) => {
       let data = res.data.sessions
       setDistricts(data);
+    }).catch((err) => {   //.this is how you catch errors
+      setFoundState(false)
+      console.log(err)
     })
   }
 
@@ -205,10 +209,10 @@ function GetState() {
   const setSearchFunction = (a) => {
     if (a === "State") {
       checkStateName(name);
-      console.log("field is " + a);
+      // console.log("field is " + a);
     } else if (a === "Zip Code") {
       findSessionByZip(name);
-      console.log("field is " + a);
+      // console.log("field is " + a);
     }
   };
 
