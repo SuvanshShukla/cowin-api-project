@@ -62,10 +62,19 @@ function GetState() {
   const [field, setField] = useState("");
   const [stateDistrictsAccordion, setStateDistrictsAccordion] = useState(null);
   const [zipCodeCenter, setZipCodeCenter] = useState([]);
+  const [districtName, setDistrictName] = useState("");
+  const [specificDistrict, setSpecificDistrict] = useState([])
   // const [currentDate, setCurrentDate] = useState();
   // const [districtCenters, setDistrictCenters] = useState([]);
 
   //we use this to get state names the first time the component mounts
+
+  let current = new Date();
+  let addOne = current.getMonth() + 1;
+  var variableDate = current.getDate() + "-" + addOne + "-" + current.getFullYear();
+  const [districtDate, setDistrictDate] = useState(variableDate);
+
+
   useEffect(() => {
     makeUrl();
     let incomingData;
@@ -149,6 +158,48 @@ function GetState() {
     setZipCodeCenter(insideData)
   }, [districts])
 
+  useEffect(() => {
+    let insideData;
+    if(specificDistrict.length>0){
+    insideData = (
+    <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Sr No.</TableCell>
+                  <TableCell>Center Id</TableCell>
+                  <TableCell>Center Name</TableCell>
+                  <TableCell>Address</TableCell>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Min Age Limit</TableCell>
+                  <TableCell>Pin Code</TableCell>
+                  <TableCell>Fee Type</TableCell>
+                  <TableCell>Vaccine</TableCell>
+                </TableRow>
+              </TableHead>
+        {specificDistrict.map((center, i) => (
+              <TableRow key={i}>
+                <TableCell>{i + 1}</TableCell>
+                <TableCell>{center.center_id}</TableCell>
+                <TableCell>{center.name}</TableCell>
+                <TableCell>{center.address}</TableCell>
+                <TableCell>{center.date}</TableCell>
+                <TableCell>{center.min_age_limit}</TableCell>
+                <TableCell>{center.pincode}</TableCell>
+                <TableCell>{center.fee_type==="Paid"?(center.fee==0 ? "Free": center.fee):center.fee_type}</TableCell>
+                <TableCell>{center.vaccine}</TableCell>
+              </TableRow>
+             ))}
+             </Table>
+      </TableContainer> )
+      setFoundState(true)
+    }
+    else {
+      insideData = null
+    }
+    setZipCodeCenter(insideData)
+  }, [specificDistrict])
+
   //use this function to make a proper date string which can be used in the API call functions
  /*  const makeCurrentDate = () => {
     let current = new Date();
@@ -201,6 +252,11 @@ function GetState() {
     })
   }
 
+
+ /*  const findByDistrict = () => {
+    // let 
+  } */
+
   const handleFieldChange = (event) => {
     setField(event.target.value);
     // console.log(field);
@@ -213,6 +269,8 @@ function GetState() {
     } else if (a === "Zip Code") {
       findSessionByZip(name);
       // console.log("field is " + a);
+    } else if (a === "District"){
+      getDistrictByDate();
     }
   };
 
@@ -220,8 +278,21 @@ function GetState() {
     let input = e.target.value;
     //the little bit of code here is used to automatically capitalize the first letter
     setName(input.charAt(0).toUpperCase() + input.slice(1));
-    // console.log(name)
+    console.log(name)
   };
+
+  const getDistrictName = (e) => {
+    let input = e.target.value;
+    setDistrictName(input.charAt(0).toUpperCase() + input.slice(1));
+    console.log(districtName);
+  };
+
+  const getDistrictDate = (e) => {
+    let input = e.target.value;
+    let revInput = input.split("-").reverse().join("-")
+    setDistrictDate(revInput);
+    console.log(districtDate)
+  };  
 
   const checkStateName = (x) => {
     let temp;
@@ -259,6 +330,47 @@ function GetState() {
     };
   };
 
+  const getDistrictByDate = () => {
+    let stateMatch, districtMatch, finalURL;
+    states.forEach((state) => {
+      if(state.state_name === name){
+        stateMatch = state.state_id
+        console.log(stateMatch)
+      }
+    })
+    axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + stateMatch).then((res) => {
+      let data = res.data.districts;
+      /* data.forEach((dist) => {
+        if(dist.district_name === districtName){
+          districtMatch = dist.district_id
+          console.log(districtMatch)
+        }
+      }) */
+      for (let index = 0; index < data.length; index++) {
+        const element = data[index];
+        if(element.district_name === districtName){
+          // districtMatch = element.district_id
+          let a = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id="
+          let c = "&date="
+          let d = districtDate
+          console.log(typeof(districtDate))
+          finalURL = a + element.district_id + c + d
+          console.log(finalURL)
+          axios.get(finalURL).then((res) => {
+            setSpecificDistrict(res.data);
+          })
+        }
+      }
+
+    })
+
+    
+
+    // console.log(districtDate)
+    // console.log(districtName)
+    // console.log(name)
+  };
+
 
   const renderLoader = (field) => {
     let tempRender
@@ -266,9 +378,15 @@ function GetState() {
       case "State":
          tempRender = stateDistrictsAccordion
         break;
+
       case "Zip Code":
         tempRender = zipCodeCenter
         break;
+
+      case "District":
+        tempRender = zipCodeCenter
+        break;
+
       default:
         tempRender = null
         break;
@@ -296,7 +414,7 @@ function GetState() {
                     Select
                   </MenuItem>
                   <MenuItem value={"State"}>State</MenuItem>
-                  {/* <MenuItem value={"District"}>District</MenuItem> */}
+                  <MenuItem value={"District"}>District</MenuItem>
                   <MenuItem value={"Zip Code"}>Zip Code</MenuItem>
                 </Select>
                 <FormHelperText>Enter Field of Search</FormHelperText>
@@ -308,7 +426,7 @@ function GetState() {
                 arrow
               >
                 <TextField
-                  label={"" + field + ""}
+                  label={"" + field==="District"? "State" : field + ""}
                   id="outlined-start-adornment"
                   className={clsx(classes.margin, classes.textField)}
                   variant="outlined"
@@ -317,6 +435,47 @@ function GetState() {
                   helperText={!foundState ? "Incorrect Entry" : ""}
                   onChange={(e) => {
                     getStateName(e);
+                  }}
+                />
+              </Tooltip>
+              &nbsp; &nbsp;
+              <Tooltip
+                title={"Enter " + field + " to find out more"}
+                placement="right"
+                arrow
+              >
+                <TextField
+                  label="District"
+                  style={{display: field==="District" ? null : "none"}}
+                  id="outlined-start-adornment-for-district-name"
+                  className={clsx(classes.margin, classes.textField)}
+                  variant="outlined"
+                  value={districtName}
+                  error={!foundState}
+                  helperText={!foundState ? "Incorrect Entry" : ""}
+                  onChange={(e) => {
+                    getDistrictName(e)                  
+                  }}
+                />
+              </Tooltip>
+              &nbsp; &nbsp;
+              <Tooltip
+                title={"Enter " + field + " to find out more"}
+                placement="right"
+                arrow
+              >
+                <TextField
+                  // label="Date"
+                  type="date"
+                  style={{display: field==="District" ? null : "none"}}
+                  id="outlined-start-adornment"
+                  className={clsx(classes.margin, classes.textField)}
+                  variant="outlined"
+                  // value={name}
+                  error={!foundState}
+                  helperText={!foundState ? "Incorrect Entry" : ""}
+                  onChange={(e) => {
+                    getDistrictDate(e)
                   }}
                 />
               </Tooltip>
@@ -352,6 +511,7 @@ function GetState() {
                   onClick={() => {setField("")
                      setDistricts([])
                      setName("")
+                     setDistrictName("")
                     }}
                 >
                   Clear
