@@ -340,35 +340,23 @@ function GetState() {
     })
     axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + stateMatch).then((res) => {
       let data = res.data.districts;
-      /* data.forEach((dist) => {
-        if(dist.district_name === districtName){
-          districtMatch = dist.district_id
-          console.log(districtMatch)
-        }
-      }) */
-      for (let index = 0; index < data.length; index++) {
-        const element = data[index];
-        if(element.district_name === districtName){
-          // districtMatch = element.district_id
-          let a = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id="
+      districtMatch = data.filter(element => element.district_name === districtName);
+      console.log(districtMatch)
+      if(districtMatch.length==1){
+        let a = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id="
           let c = "&date="
           let d = districtDate
           console.log(typeof(districtDate))
-          finalURL = a + element.district_id + c + d
-          console.log(finalURL)
+          finalURL = a + districtMatch[0].district_id + c + d
+          // console.log(finalURL)
           axios.get(finalURL).then((res) => {
-            setSpecificDistrict(res.data);
+            setSpecificDistrict(res.data.centers);
+            // console.log(specificDistrict)
           })
-        }
+      } else{
+        setFoundState(false)
       }
-
     })
-
-    
-
-    // console.log(districtDate)
-    // console.log(districtName)
-    // console.log(name)
   };
 
 
