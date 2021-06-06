@@ -38,7 +38,8 @@ dotenv.config();
   this-> i ultimately had to delete DistrictAccordion component and move the map method here.
 
   todo:
-  * make all the functions for the API calls and show all obtained data
+  // * make all the functions for the API calls and show all obtained data
+  * make a better way of showing district specific data, i.e. change the function and variable for its display 
   
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
@@ -116,6 +117,7 @@ function GetState() {
       setStateDistrictsAccordion(v)
   }, [districts])
 
+
   useEffect(() => {
     let insideData;
     if(districts.length>0){
@@ -158,10 +160,12 @@ function GetState() {
     setZipCodeCenter(insideData)
   }, [districts])
 
+
+  //the below function is used to load the District specific results view
   useEffect(() => {
     let insideData;
     if(specificDistrict.length>0){
-    insideData = (
+   /*  insideData = (
     <TableContainer>
             <Table>
               <TableHead>
@@ -191,7 +195,53 @@ function GetState() {
               </TableRow>
              ))}
              </Table>
-      </TableContainer> )
+      </TableContainer> ) */
+
+ insideData = (
+    specificDistrict.map((center, key) => (
+  <Accordion key={key}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+          >
+          <Typography>
+            Center Name: {center.name}
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Table>
+            <TableHead>
+              <TableCell>Center Name</TableCell>
+              <TableCell>Address</TableCell>
+              <TableCell>Block Name</TableCell>
+              <TableCell>Pincode</TableCell>
+              <TableCell>Fee Type</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Min. Age Limit</TableCell>
+              <TableCell>Vaccine</TableCell>
+              <TableCell>Slot Timigs</TableCell>
+            </TableHead>
+            <TableRow>
+              <TableCell>{center.name}</TableCell>
+              <TableCell>{center.address}</TableCell>
+              <TableCell>{center.block_name}</TableCell>
+              <TableCell>{center.pincode}</TableCell>
+              <TableCell>{center.fee_type==="Paid"?(center.fee==0 ? "Free": center.fee):center.fee_type}</TableCell>
+              <TableCell>{center.sessions[0].date}</TableCell>
+              <TableCell>{center.sessions[0].min_age_limit}</TableCell>
+              <TableCell>{center.sessions[0].vaccine}</TableCell>
+              <TableCell>{center.sessions[0].slots.map((slot, i) => (
+                <li key={i}>{slot}</li>
+              ))}</TableCell>
+            </TableRow>
+          </Table>
+          {/* <DistrictCentersDialog d_id={center.district_id} d_name={center.district_name}/> */}
+        </AccordionDetails>
+      </Accordion>
+        ))
+)
+
       setFoundState(true)
     }
     else {
@@ -199,44 +249,6 @@ function GetState() {
     }
     setZipCodeCenter(insideData)
   }, [specificDistrict])
-
-  //use this function to make a proper date string which can be used in the API call functions
- /*  const makeCurrentDate = () => {
-    let current = new Date();
-    let addOne = current.getMonth() + 1;
-    setCurrentDate(
-      current.getDate() + "-" + addOne + "-" + current.getFullYear()
-    );
-  }; */
-
-  //use this function to get district's center's info for the next 7 days, it uses district_id and current date
-  /* const getDistrictCenters = (a) => {
-    console.log(a);
-    makeCurrentDate();
-    axios
-      .get(
-        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=" +
-          a +
-          "&date=" +
-          currentDate
-      )
-      .then((res) => {
-        console.log(res.data);
-        setDistrictCenters(res.data.sessions)
-      });
-  }; */
-
-  /* const findByDistrict = (a) => {
-    axios
-      .get(
-        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=510&date=31-03-2021"
-      )
-      .then((res) => {
-        let responseObj = res.data;
-        console.log(responseObj.sessions[0]);
-        setStates((a = responseObj.sessions[0].name));
-      });
-  }; */
 
 
   const findSessionByZip = (name) => {
@@ -252,10 +264,6 @@ function GetState() {
     })
   }
 
-
- /*  const findByDistrict = () => {
-    // let 
-  } */
 
   const handleFieldChange = (event) => {
     setField(event.target.value);
@@ -278,20 +286,20 @@ function GetState() {
     let input = e.target.value;
     //the little bit of code here is used to automatically capitalize the first letter
     setName(input.charAt(0).toUpperCase() + input.slice(1));
-    console.log(name)
+    // console.log(name)
   };
 
   const getDistrictName = (e) => {
     let input = e.target.value;
     setDistrictName(input.charAt(0).toUpperCase() + input.slice(1));
-    console.log(districtName);
+    // console.log(districtName);
   };
 
   const getDistrictDate = (e) => {
     let input = e.target.value;
     let revInput = input.split("-").reverse().join("-")
     setDistrictDate(revInput);
-    console.log(districtDate)
+    // console.log(districtDate)
   };  
 
   const checkStateName = (x) => {
@@ -331,27 +339,29 @@ function GetState() {
   };
 
   const getDistrictByDate = () => {
+    //so this required some thinking...
+    //i first loaded all the states as i do upon every refresh
+    //then in states i iterated through all the states until a match was found
+    //then used it to send a GET request for all the districts in the state
+    //after that i filtered all the elements in the array until only the one with the user's district was found
+    //then i sent another GET request for all the centers and their info
     let stateMatch, districtMatch, finalURL;
-    states.forEach((state) => {
-      if(state.state_name === name){
-        stateMatch = state.state_id
-        console.log(stateMatch)
-      }
-    })
+
+    stateMatch = states.filter(element => element.state_name === name);
+    stateMatch = stateMatch[0].state_id
+
+    
     axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + stateMatch).then((res) => {
       let data = res.data.districts;
       districtMatch = data.filter(element => element.district_name === districtName);
-      console.log(districtMatch)
       if(districtMatch.length==1){
         let a = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id="
           let c = "&date="
           let d = districtDate
-          console.log(typeof(districtDate))
           finalURL = a + districtMatch[0].district_id + c + d
-          // console.log(finalURL)
+          console.log(finalURL);
           axios.get(finalURL).then((res) => {
             setSpecificDistrict(res.data.centers);
-            // console.log(specificDistrict)
           })
       } else{
         setFoundState(false)
@@ -492,14 +502,16 @@ function GetState() {
             >
               <span>
                 <Button
-                  style={{display: districts.length==0? "none" : null}}
+                  style={{display: specificDistrict.length!=0 || districts.length!=0 ? null : "none"}}
                   variant="contained"
                   color="secondary"
                   //you can't remove the arrow function because the function will run the moment the component loads
-                  onClick={() => {setField("")
+                  onClick={() => {
+                     setField("")
                      setDistricts([])
                      setName("")
                      setDistrictName("")
+                     setSpecificDistrict([])
                     }}
                 >
                   Clear
