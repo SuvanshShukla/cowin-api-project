@@ -41,6 +41,7 @@ dotenv.config();
   // * make all the functions for the API calls and show all obtained data
   * make a better way of showing district specific data, i.e. change the function and variable for its display 
   * change the way of showing the data of 7 days District
+  * you also have to fix the wrong info error messages 
   
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
@@ -120,6 +121,7 @@ function GetState() {
   }, [districts])
 
 
+  //this one is used for zip code results
   useEffect(() => {
     let insideData;
     if(districts.length>0){
@@ -267,7 +269,6 @@ function GetState() {
               ))}</TableCell>
             </TableRow>))}
           </Table>
-          {/* <DistrictCentersDialog d_id={center.district_id} d_name={center.district_name}/> */}
         </AccordionDetails>
       </Accordion>
         ))
@@ -326,6 +327,12 @@ function GetState() {
     })
   };
 
+  const getZipCode7Days = () => {
+    //you'll have to make this work
+    console.log("the function ran");
+    // axios api string => "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=110001&date=31-03-2021"
+  };
+
   const handleFieldChange = (event) => {
     setField(event.target.value);
     // console.log(field);
@@ -342,6 +349,8 @@ function GetState() {
       getDistrictToday();
     } else if (a === "District (7 days)"){
       getDistrict7Days()
+    } else if (a === "Zip Code (7 days)"){
+      getZipCode7Days()
     }
   };
 
@@ -483,8 +492,9 @@ function GetState() {
                   </MenuItem>
                   <MenuItem value={"State (today)"}>State (today)</MenuItem>
                   <MenuItem value={"District (today)"}>District (today)</MenuItem>
-                  <MenuItem value={"Zip Code (today)"}>Zip Code (today)</MenuItem>
+                  <MenuItem value={"Zip Code (today)"}>Pin Code (today)</MenuItem>
                   <MenuItem value={"District (7 days)"}>District (7 days)</MenuItem>
+                  <MenuItem value={"Zip Code (7 days)"}>Pin Code (7 days)</MenuItem>
                 </Select>
                 <FormHelperText>Enter Field of Search</FormHelperText>
               </FormControl>
@@ -538,7 +548,7 @@ function GetState() {
                 <TextField
                   label="Zip Code" /* {"" + field==="District (today)"? "State" : field + ""} */
                   id="outlined-start-adornment"
-                  style={{display: (field === "Zip Code (today)")? null : "none"}}
+                  style={{display: (field === "Zip Code (today)" || field=== "Zip Code (7 days)")? null : "none"}}
                   className={clsx(classes.margin, classes.textField)}
                   variant="outlined"
                   value={name}
@@ -579,7 +589,7 @@ function GetState() {
                 <TextField
                   // label="Date"
                   type="date"
-                  style={{display: field==="District (7 days)" ? null : "none"}}
+                  style={{display: (field==="District (7 days)" || field === "Zip Code (7 days)") ? null : "none"}}
                   id="outlined-start-adornment"
                   className={clsx(classes.margin, classes.textField)}
                   variant="outlined"
@@ -627,6 +637,7 @@ function GetState() {
                      setName("")
                      setDistrictName("")
                      setSpecificDistrict([])
+                     setDistricts7Days([])
                     }}
                 >
                   Clear
