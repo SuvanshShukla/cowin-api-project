@@ -40,6 +40,7 @@ dotenv.config();
   todo:
   // * make all the functions for the API calls and show all obtained data
   * make a better way of showing district specific data, i.e. change the function and variable for its display 
+  * change the way of showing the data of 7 days District
   
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
@@ -65,6 +66,7 @@ function GetState() {
   const [zipCodeCenter, setZipCodeCenter] = useState([]);
   const [districtName, setDistrictName] = useState("");
   const [specificDistrict, setSpecificDistrict] = useState([])
+  const [districts7Days, setDistricts7Days] = useState([]);
   // const [currentDate, setCurrentDate] = useState();
   // const [districtCenters, setDistrictCenters] = useState([]);
 
@@ -165,38 +167,6 @@ function GetState() {
   useEffect(() => {
     let insideData;
     if(specificDistrict.length>0){
-   /*  insideData = (
-    <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Sr No.</TableCell>
-                  <TableCell>Center Id</TableCell>
-                  <TableCell>Center Name</TableCell>
-                  <TableCell>Address</TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Min Age Limit</TableCell>
-                  <TableCell>Pin Code</TableCell>
-                  <TableCell>Fee Type</TableCell>
-                  <TableCell>Vaccine</TableCell>
-                </TableRow>
-              </TableHead>
-        {specificDistrict.map((center, i) => (
-              <TableRow key={i}>
-                <TableCell>{i + 1}</TableCell>
-                <TableCell>{center.center_id}</TableCell>
-                <TableCell>{center.name}</TableCell>
-                <TableCell>{center.address}</TableCell>
-                <TableCell>{center.date}</TableCell>
-                <TableCell>{center.min_age_limit}</TableCell>
-                <TableCell>{center.pincode}</TableCell>
-                <TableCell>{center.fee_type==="Paid"?(center.fee==0 ? "Free": center.fee):center.fee_type}</TableCell>
-                <TableCell>{center.vaccine}</TableCell>
-              </TableRow>
-             ))}
-             </Table>
-      </TableContainer> ) */
-
  insideData = (
     specificDistrict.map((center, key) => (
   <Accordion key={key}>
@@ -251,6 +221,66 @@ function GetState() {
   }, [specificDistrict])
 
 
+  // the below useEffect is used to load the contents of 7 days of info
+  useEffect(() => {
+    let insideData;
+    if(districts7Days.length>0){
+ insideData = (
+    districts7Days.map((center, key) => (
+  <Accordion key={key}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+          >
+          <Typography>
+            Center Name: {center.name} [Number of Sessions: {center.sessions.length}]
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Table>
+            <TableHead>
+              <TableCell>Session Number</TableCell>
+              <TableCell>Center Name</TableCell>
+              <TableCell>Address</TableCell>
+              <TableCell>Block Name</TableCell>
+              <TableCell>Pincode</TableCell>
+              <TableCell>Fee Type</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Min. Age Limit</TableCell>
+              <TableCell>Vaccine</TableCell>
+              <TableCell>Slot Timigs</TableCell>
+            </TableHead>
+            {center.sessions.map((session, i) => (
+              <TableRow key={i}>
+              <TableCell>{i + 1}</TableCell>
+              <TableCell>{center.name}</TableCell>
+              <TableCell>{center.address}</TableCell>
+              <TableCell>{center.block_name}</TableCell>
+              <TableCell>{center.pincode}</TableCell>
+              <TableCell>{center.fee_type==="Paid"?(center.fee==0 ? "Free": center.fee):center.fee_type}</TableCell>
+              <TableCell>{session.date}</TableCell>
+              <TableCell>{session.min_age_limit}</TableCell>
+              <TableCell>{session.vaccine}</TableCell>
+              <TableCell>{session.slots.map((slot, i) => (
+                <li key={i}>{slot}</li>
+              ))}</TableCell>
+            </TableRow>))}
+          </Table>
+          {/* <DistrictCentersDialog d_id={center.district_id} d_name={center.district_name}/> */}
+        </AccordionDetails>
+      </Accordion>
+        ))
+)
+
+      setFoundState(true)
+    }
+    else {
+      insideData = null
+    }
+    setZipCodeCenter(insideData)
+  }, [districts7Days])
+
   const findSessionByZip = (name) => {
     let current = new Date();
     let addOne = current.getMonth() + 1;
@@ -264,6 +294,37 @@ function GetState() {
     })
   }
 
+  const getDistrict7Days = () => {
+    // this basically has the same code as the getDistrictToday function
+    // it just set the received info into a different state
+    let stateMatch, districtMatch, finalURL;
+
+    stateMatch = states.filter(element => element.state_name === name);
+    stateMatch = stateMatch[0].state_id
+
+    
+    axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + stateMatch).then((res) => {
+      let data = res.data.districts;
+      // console.log(data)
+      districtMatch = data.filter(element => element.district_name === districtName);
+      if(districtMatch.length==1){
+        let a = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id="
+          let c = "&date="
+          let current = new Date();
+          let addOne = current.getMonth() + 1;
+          let d = current.getDate() + "-" + addOne + "-" + current.getFullYear();
+          finalURL = a + districtMatch[0].district_id + c + d
+          // finalURL = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=512&date=31-03-2021";
+          console.log(finalURL);
+          axios.get(finalURL).then((res) => {
+            setDistricts7Days(res.data.centers);
+            console.log(res.data.centers)
+          })
+      } else{
+        setFoundState(false)
+      }
+    })
+  };
 
   const handleFieldChange = (event) => {
     setField(event.target.value);
@@ -278,7 +339,9 @@ function GetState() {
       findSessionByZip(name);
       console.log("field is " + a);
     } else if (a === "District (today)"){
-      getDistrictByDate();
+      getDistrictToday();
+    } else if (a === "District (7 days)"){
+      getDistrict7Days()
     }
   };
 
@@ -338,7 +401,7 @@ function GetState() {
     };
   };
 
-  const getDistrictByDate = () => {
+  const getDistrictToday = () => {
     //so this required some thinking...
     //i first loaded all the states as i do upon every refresh
     //then in states i iterated through all the states until a match was found
@@ -385,6 +448,10 @@ function GetState() {
         break;
 
       case "District (today)":
+        tempRender = zipCodeCenter
+        break;
+
+      case "District (7 days)":
         tempRender = zipCodeCenter
         break;
 
