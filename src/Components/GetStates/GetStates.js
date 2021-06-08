@@ -228,10 +228,10 @@ function GetState() {
               <TableCell>{center.block_name}</TableCell>
               <TableCell>{center.pincode}</TableCell>
               <TableCell>{center.fee_type==="Paid"?(center.fee==0 ? "Free": center.fee):center.fee_type}</TableCell>
-              <TableCell>{center.sessions[0].date}</TableCell>
-              <TableCell>{center.sessions[0].min_age_limit}</TableCell>
-              <TableCell>{center.sessions[0].vaccine}</TableCell>
-              <TableCell>{center.sessions[0].slots.map((slot, i) => (
+              <TableCell>{center.date}</TableCell>
+              <TableCell>{center.min_age_limit}</TableCell>
+              <TableCell>{center.vaccine}</TableCell>
+              <TableCell>{center.slots.map((slot, i) => (
                 <li key={i}>{slot}</li>
               ))}</TableCell>
             </TableRow>
@@ -271,13 +271,13 @@ function GetState() {
   };
 
   const setSearchFunction = (a) => {
-    if (a === "State") {
+    if (a === "State (today)") {
       checkStateName(name);
       // console.log("field is " + a);
-    } else if (a === "Zip Code") {
+    } else if (a === "Zip Code (today)") {
       findSessionByZip(name);
-      // console.log("field is " + a);
-    } else if (a === "District"){
+      console.log("field is " + a);
+    } else if (a === "District (today)"){
       getDistrictByDate();
     }
   };
@@ -286,7 +286,7 @@ function GetState() {
     let input = e.target.value;
     //the little bit of code here is used to automatically capitalize the first letter
     setName(input.charAt(0).toUpperCase() + input.slice(1));
-    // console.log(name)
+    console.log(name)
   };
 
   const getDistrictName = (e) => {
@@ -353,15 +353,18 @@ function GetState() {
     
     axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + stateMatch).then((res) => {
       let data = res.data.districts;
+      console.log(data)
       districtMatch = data.filter(element => element.district_name === districtName);
       if(districtMatch.length==1){
-        let a = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id="
+        let a = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id="
           let c = "&date="
-          let d = districtDate
+          let current = new Date();
+          let addOne = current.getMonth() + 1;
+          let d = current.getDate() + "-" + addOne + "-" + current.getFullYear();
           finalURL = a + districtMatch[0].district_id + c + d
           console.log(finalURL);
           axios.get(finalURL).then((res) => {
-            setSpecificDistrict(res.data.centers);
+            setSpecificDistrict(res.data.sessions);
           })
       } else{
         setFoundState(false)
@@ -373,15 +376,15 @@ function GetState() {
   const renderLoader = (field) => {
     let tempRender
     switch (field) {
-      case "State":
+      case "State (today)":
          tempRender = stateDistrictsAccordion
         break;
 
-      case "Zip Code":
+      case "Zip Code (today)":
         tempRender = zipCodeCenter
         break;
 
-      case "District":
+      case "District (today)":
         tempRender = zipCodeCenter
         break;
 
@@ -409,11 +412,12 @@ function GetState() {
                   inputProps={{ "aria-label": "Without label" }}
                 >
                   <MenuItem value="" disabled>
-                    Select
+                    Select Field of Search
                   </MenuItem>
-                  <MenuItem value={"State"}>State</MenuItem>
-                  <MenuItem value={"District"}>District</MenuItem>
-                  <MenuItem value={"Zip Code"}>Zip Code</MenuItem>
+                  <MenuItem value={"State (today)"}>State (today)</MenuItem>
+                  <MenuItem value={"District (today)"}>District (today)</MenuItem>
+                  <MenuItem value={"Zip Code (today)"}>Zip Code (today)</MenuItem>
+                  <MenuItem value={"District (7 days)"}>District (7 days)</MenuItem>
                 </Select>
                 <FormHelperText>Enter Field of Search</FormHelperText>
               </FormControl>
@@ -424,8 +428,9 @@ function GetState() {
                 arrow
               >
                 <TextField
-                  label={"" + field==="District"? "State" : field + ""}
+                  label="State" /* {"" + field==="District (today)"? "State" : field + ""} */
                   id="outlined-start-adornment"
+                  style={{display: (field === "State (today)" || field === "District (today)" || field==="District (7 days)")? null : "none"}}
                   className={clsx(classes.margin, classes.textField)}
                   variant="outlined"
                   value={name}
@@ -436,7 +441,7 @@ function GetState() {
                   }}
                 />
               </Tooltip>
-              &nbsp; &nbsp;
+              &nbsp; &nbsp; &nbsp;
               <Tooltip
                 title={"Enter " + field + " to find out more"}
                 placement="right"
@@ -444,7 +449,7 @@ function GetState() {
               >
                 <TextField
                   label="District"
-                  style={{display: field==="District" ? null : "none"}}
+                  style={{display: (field==="District (today)" || field==="District (7 days)") ? null : "none"}}
                   id="outlined-start-adornment-for-district-name"
                   className={clsx(classes.margin, classes.textField)}
                   variant="outlined"
@@ -456,7 +461,49 @@ function GetState() {
                   }}
                 />
               </Tooltip>
+              &nbsp; &nbsp; &nbsp;
+              {/* //* textfield for zip code */}
+              <Tooltip
+                title={"Enter " + field + " to find out more"}
+                placement="right"
+                arrow
+              >
+                <TextField
+                  label="Zip Code" /* {"" + field==="District (today)"? "State" : field + ""} */
+                  id="outlined-start-adornment"
+                  style={{display: (field === "Zip Code (today)")? null : "none"}}
+                  className={clsx(classes.margin, classes.textField)}
+                  variant="outlined"
+                  value={name}
+                  error={!foundState}
+                  helperText={!foundState ? "Incorrect Entry" : ""}
+                  onChange={(e) => {
+                    getStateName(e);
+                  }}
+                />
+              </Tooltip>
               &nbsp; &nbsp;
+              {/* //*date for district today */}
+              {/* <Tooltip
+                title={"Enter " + field + " to find out more"}
+                placement="right"
+                arrow
+              >
+                <TextField
+                  // label="Date"
+                  type="date"
+                  style={{display: field==="District (today)" ? null : "none"}}
+                  id="outlined-start-adornment"
+                  className={clsx(classes.margin, classes.textField)}
+                  variant="outlined"
+                  // value={name}
+                  error={!foundState}
+                  helperText={!foundState ? "Incorrect Entry" : ""}
+                  onChange={(e) => {
+                    getDistrictDate(e)
+                  }}
+                />
+              </Tooltip> */}
               <Tooltip
                 title={"Enter " + field + " to find out more"}
                 placement="right"
@@ -465,7 +512,7 @@ function GetState() {
                 <TextField
                   // label="Date"
                   type="date"
-                  style={{display: field==="District" ? null : "none"}}
+                  style={{display: field==="District (7 days)" ? null : "none"}}
                   id="outlined-start-adornment"
                   className={clsx(classes.margin, classes.textField)}
                   variant="outlined"
@@ -479,6 +526,7 @@ function GetState() {
               </Tooltip>
             </form>
             <br />
+            {/* //this is where the buttons start */}
             <Tooltip
               title={field === "" ? "Please Select Field" : "Click to get Info"}
               arrow
