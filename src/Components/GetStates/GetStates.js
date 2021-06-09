@@ -24,8 +24,6 @@ import {
 } from "@material-ui/core";
 import clsx from "clsx";
 
-
-
 //you need to install dotenv using npm then import and configure like below
 import dotenv from "dotenv";
 import DistrictCentersDialog from "../DistrictCentersDialog/DistrictCentersDialog";
@@ -56,18 +54,18 @@ const bkgimgs = [
 ];
 
 function GetState() {
-  
   const [states, setStates] = useState();
   const [name, setName] = useState("");
   const [districts, setDistricts] = useState([]);
   //the initial value of foundState is true so no error is shown when we start typing
-  const [foundState, setFoundState] = useState(true); 
+  const [foundState, setFoundState] = useState(true);
   const [field, setField] = useState("");
   const [stateDistrictsAccordion, setStateDistrictsAccordion] = useState(null);
   const [zipCodeCenter, setZipCodeCenter] = useState([]);
   const [districtName, setDistrictName] = useState("");
-  const [specificDistrict, setSpecificDistrict] = useState([])
+  const [specificDistrict, setSpecificDistrict] = useState([]);
   const [districts7Days, setDistricts7Days] = useState([]);
+  const [zipCode7Days, setZipCode7Days] = useState([]);
   // const [currentDate, setCurrentDate] = useState();
   // const [districtCenters, setDistrictCenters] = useState([]);
 
@@ -75,9 +73,9 @@ function GetState() {
 
   let current = new Date();
   let addOne = current.getMonth() + 1;
-  var variableDate = current.getDate() + "-" + addOne + "-" + current.getFullYear();
+  var variableDate =
+    current.getDate() + "-" + addOne + "-" + current.getFullYear();
   const [districtDate, setDistrictDate] = useState(variableDate);
-
 
   useEffect(() => {
     makeUrl();
@@ -99,7 +97,6 @@ function GetState() {
       });
   }, []);
 
-
   //what the below useEffect does is: it sets up stateDistrictsAccordion everytime districts gets updated!! so theres no lag!!!
   useEffect(() => {
     let v = districts.map((dist, i) => (
@@ -109,39 +106,40 @@ function GetState() {
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography>
-            {dist.district_name}
-          </Typography>
+          <Typography>{dist.district_name}</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <DistrictCentersDialog d_id={dist.district_id} d_name={dist.district_name}/>
+          <DistrictCentersDialog
+            d_id={dist.district_id}
+            d_name={dist.district_name}
+          />
         </AccordionDetails>
-      </Accordion>))
-      setStateDistrictsAccordion(v)
-  }, [districts])
+      </Accordion>
+    ));
+    setStateDistrictsAccordion(v);
+  }, [districts]);
 
-
-  //this one is used for zip code results
+  //the below useEffect is used for zip code results
   useEffect(() => {
     let insideData;
-    if(districts.length>0){
-    insideData = (
-    <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Sr No.</TableCell>
-                  <TableCell>Center Id</TableCell>
-                  <TableCell>Center Name</TableCell>
-                  <TableCell>Address</TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Min Age Limit</TableCell>
-                  <TableCell>Pin Code</TableCell>
-                  <TableCell>Fee Type</TableCell>
-                  <TableCell>Vaccine</TableCell>
-                </TableRow>
-              </TableHead>
-        {districts.map((center, i) => (
+    if (districts.length > 0) {
+      insideData = (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Sr No.</TableCell>
+                <TableCell>Center Id</TableCell>
+                <TableCell>Center Name</TableCell>
+                <TableCell>Address</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Min Age Limit</TableCell>
+                <TableCell>Pin Code</TableCell>
+                <TableCell>Fee Type</TableCell>
+                <TableCell>Vaccine</TableCell>
+              </TableRow>
+            </TableHead>
+            {districts.map((center, i) => (
               <TableRow key={i}>
                 <TableCell>{i + 1}</TableCell>
                 <TableCell>{center.center_id}</TableCell>
@@ -150,186 +148,294 @@ function GetState() {
                 <TableCell>{center.date}</TableCell>
                 <TableCell>{center.min_age_limit}</TableCell>
                 <TableCell>{center.pincode}</TableCell>
-                <TableCell>{center.fee_type==="Paid"?(center.fee==0 ? "Free": center.fee):center.fee_type}</TableCell>
+                <TableCell>
+                  {center.fee_type === "Paid"
+                    ? center.fee == 0
+                      ? "Free"
+                      : center.fee
+                    : center.fee_type}
+                </TableCell>
                 <TableCell>{center.vaccine}</TableCell>
               </TableRow>
-             ))}
-             </Table>
-      </TableContainer> )
-      setFoundState(true)
+            ))}
+          </Table>
+        </TableContainer>
+      );
+      setFoundState(true);
+    } else {
+      insideData = null;
     }
-    else {
-      insideData = null
-    }
-    setZipCodeCenter(insideData)
-  }, [districts])
-
+    setZipCodeCenter(insideData);
+  }, [districts]);
 
   //the below function is used to load the District specific results view
   useEffect(() => {
     let insideData;
-    if(specificDistrict.length>0){
- insideData = (
-    specificDistrict.map((center, key) => (
-  <Accordion key={key}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
+    if (specificDistrict.length > 0) {
+      insideData = specificDistrict.map((center, key) => (
+        <Accordion key={key}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
           >
-          <Typography>
-            Center Name: {center.name}
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Table>
-            <TableHead>
-              <TableCell>Center Name</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>Block Name</TableCell>
-              <TableCell>Pincode</TableCell>
-              <TableCell>Fee Type</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Min. Age Limit</TableCell>
-              <TableCell>Vaccine</TableCell>
-              <TableCell>Slot Timigs</TableCell>
-            </TableHead>
-            <TableRow>
-              <TableCell>{center.name}</TableCell>
-              <TableCell>{center.address}</TableCell>
-              <TableCell>{center.block_name}</TableCell>
-              <TableCell>{center.pincode}</TableCell>
-              <TableCell>{center.fee_type==="Paid"?(center.fee==0 ? "Free": center.fee):center.fee_type}</TableCell>
-              <TableCell>{center.date}</TableCell>
-              <TableCell>{center.min_age_limit}</TableCell>
-              <TableCell>{center.vaccine}</TableCell>
-              <TableCell>{center.slots.map((slot, i) => (
-                <li key={i}>{slot}</li>
-              ))}</TableCell>
-            </TableRow>
-          </Table>
-          {/* <DistrictCentersDialog d_id={center.district_id} d_name={center.district_name}/> */}
-        </AccordionDetails>
-      </Accordion>
-        ))
-)
+            <Typography>Center Name: {center.name}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Table>
+              <TableHead>
+                <TableCell>Center Name</TableCell>
+                <TableCell>Address</TableCell>
+                <TableCell>Block Name</TableCell>
+                <TableCell>Pincode</TableCell>
+                <TableCell>Fee Type</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Min. Age Limit</TableCell>
+                <TableCell>Vaccine</TableCell>
+                <TableCell>Slot Timigs</TableCell>
+              </TableHead>
+              <TableRow>
+                <TableCell>{center.name}</TableCell>
+                <TableCell>{center.address}</TableCell>
+                <TableCell>{center.block_name}</TableCell>
+                <TableCell>{center.pincode}</TableCell>
+                <TableCell>
+                  {center.fee_type === "Paid"
+                    ? center.fee == 0
+                      ? "Free"
+                      : center.fee
+                    : center.fee_type}
+                </TableCell>
+                <TableCell>{center.date}</TableCell>
+                <TableCell>{center.min_age_limit}</TableCell>
+                <TableCell>{center.vaccine}</TableCell>
+                <TableCell>
+                  {center.slots.map((slot, i) => (
+                    <li key={i}>{slot}</li>
+                  ))}
+                </TableCell>
+              </TableRow>
+            </Table>
+            {/* <DistrictCentersDialog d_id={center.district_id} d_name={center.district_name}/> */}
+          </AccordionDetails>
+        </Accordion>
+      ));
 
-      setFoundState(true)
+      setFoundState(true);
+    } else {
+      insideData = null;
     }
-    else {
-      insideData = null
-    }
-    setZipCodeCenter(insideData)
-  }, [specificDistrict])
+    setZipCodeCenter(insideData);
+  }, [specificDistrict]);
 
-
-  // the below useEffect is used to load the contents of 7 days of info
+  // the below useEffect is used to load the contents of 7 days of info DISTRICT
   useEffect(() => {
     let insideData;
-    if(districts7Days.length>0){
- insideData = (
-    districts7Days.map((center, key) => (
-  <Accordion key={key}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
+    if (districts7Days.length > 0) {
+      insideData = districts7Days.map((center, key) => (
+        <Accordion key={key}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
           >
-          <Typography>
-            Center Name: {center.name} [Number of Sessions: {center.sessions.length}]
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Table>
-            <TableHead>
-              <TableCell>Session Number</TableCell>
-              <TableCell>Center Name</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>Block Name</TableCell>
-              <TableCell>Pincode</TableCell>
-              <TableCell>Fee Type</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Min. Age Limit</TableCell>
-              <TableCell>Vaccine</TableCell>
-              <TableCell>Slot Timigs</TableCell>
-            </TableHead>
-            {center.sessions.map((session, i) => (
-              <TableRow key={i}>
-              <TableCell>{i + 1}</TableCell>
-              <TableCell>{center.name}</TableCell>
-              <TableCell>{center.address}</TableCell>
-              <TableCell>{center.block_name}</TableCell>
-              <TableCell>{center.pincode}</TableCell>
-              <TableCell>{center.fee_type==="Paid"?(center.fee==0 ? "Free": center.fee):center.fee_type}</TableCell>
-              <TableCell>{session.date}</TableCell>
-              <TableCell>{session.min_age_limit}</TableCell>
-              <TableCell>{session.vaccine}</TableCell>
-              <TableCell>{session.slots.map((slot, i) => (
-                <li key={i}>{slot}</li>
-              ))}</TableCell>
-            </TableRow>))}
-          </Table>
-        </AccordionDetails>
-      </Accordion>
-        ))
-)
+            <Typography>
+              Center Name: {center.name} [Number of Sessions:{" "}
+              {center.sessions.length}]
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Table>
+              <TableHead>
+                <TableCell>Session Number</TableCell>
+                <TableCell>Center Name</TableCell>
+                <TableCell>Address</TableCell>
+                <TableCell>Block Name</TableCell>
+                <TableCell>Pincode</TableCell>
+                <TableCell>Fee Type</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Min. Age Limit</TableCell>
+                <TableCell>Vaccine</TableCell>
+                <TableCell>Slot Timigs</TableCell>
+              </TableHead>
+              {center.sessions.map((session, i) => (
+                <TableRow key={i}>
+                  <TableCell>{i + 1}</TableCell>
+                  <TableCell>{center.name}</TableCell>
+                  <TableCell>{center.address}</TableCell>
+                  <TableCell>{center.block_name}</TableCell>
+                  <TableCell>{center.pincode}</TableCell>
+                  <TableCell>
+                    {center.fee_type === "Paid"
+                      ? center.fee == 0
+                        ? "Free"
+                        : center.fee
+                      : center.fee_type}
+                  </TableCell>
+                  <TableCell>{session.date}</TableCell>
+                  <TableCell>{session.min_age_limit}</TableCell>
+                  <TableCell>{session.vaccine}</TableCell>
+                  <TableCell>
+                    {session.slots.map((slot, i) => (
+                      <li key={i}>{slot}</li>
+                    ))}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </Table>
+          </AccordionDetails>
+        </Accordion>
+      ));
 
-      setFoundState(true)
+      setFoundState(true);
+    } else {
+      insideData = null;
     }
-    else {
-      insideData = null
+    setZipCodeCenter(insideData);
+  }, [districts7Days]);
+
+  //the below useEffect is used in rendering the data for zipcode search for 7 days
+  useEffect(() => {
+    let insideData;
+    if (zipCode7Days.length > 0) {
+      insideData = zipCode7Days.map((center, key) => (
+        <Accordion key={key}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography>
+              Center Name: {center.name} [Number of Sessions:{" "}
+              {center.sessions.length}]
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Table>
+              <TableHead>
+                <TableCell>Session Number</TableCell>
+                <TableCell>Center Name</TableCell>
+                <TableCell>Address</TableCell>
+                <TableCell>Block Name</TableCell>
+                <TableCell>Pincode</TableCell>
+                <TableCell>Fee Type</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Min. Age Limit</TableCell>
+                <TableCell>Vaccine</TableCell>
+                <TableCell>Slot Timigs</TableCell>
+              </TableHead>
+              {center.sessions.map((session, i) => (
+                <TableRow key={i}>
+                  <TableCell>{i + 1}</TableCell>
+                  <TableCell>{center.name}</TableCell>
+                  <TableCell>{center.address}</TableCell>
+                  <TableCell>{center.block_name}</TableCell>
+                  <TableCell>{center.pincode}</TableCell>
+                  <TableCell>
+                    {center.fee_type === "Paid"
+                      ? center.fee == 0
+                        ? "Free"
+                        : center.fee
+                      : center.fee_type}
+                  </TableCell>
+                  <TableCell>{session.date}</TableCell>
+                  <TableCell>{session.min_age_limit}</TableCell>
+                  <TableCell>{session.vaccine}</TableCell>
+                  <TableCell>
+                    {session.slots.map((slot, i) => (
+                      <li key={i}>{slot}</li>
+                    ))}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </Table>
+          </AccordionDetails>
+        </Accordion>
+      ));
+
+      setFoundState(true);
+    } else {
+      insideData = null;
     }
-    setZipCodeCenter(insideData)
-  }, [districts7Days])
+    setZipCodeCenter(insideData);
+  }, [zipCode7Days]);
 
   const findSessionByZip = (name) => {
     let current = new Date();
     let addOne = current.getMonth() + 1;
     var c = current.getDate() + "-" + addOne + "-" + current.getFullYear();
-    axios.get("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode="+name+"&date="+c).then((res) => {
-      let data = res.data.sessions
-      setDistricts(data);
-    }).catch((err) => {   //.this is how you catch errors
-      setFoundState(false)
-      console.log(err)
-    })
-  }
+    axios
+      .get(
+        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode=" +
+          name +
+          "&date=" +
+          c
+      )
+      .then((res) => {
+        let data = res.data.sessions;
+        setDistricts(data);
+      })
+      .catch((err) => {
+        //.this is how you catch errors
+        setFoundState(false);
+        console.log(err);
+      });
+  };
 
   const getDistrict7Days = () => {
     // this basically has the same code as the getDistrictToday function
     // it just set the received info into a different state
     let stateMatch, districtMatch, finalURL;
 
-    stateMatch = states.filter(element => element.state_name === name);
-    stateMatch = stateMatch[0].state_id
+    stateMatch = states.filter((element) => element.state_name === name);
+    stateMatch = stateMatch[0].state_id;
 
-    
-    axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + stateMatch).then((res) => {
-      let data = res.data.districts;
-      // console.log(data)
-      districtMatch = data.filter(element => element.district_name === districtName);
-      if(districtMatch.length==1){
-        let a = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id="
-          let c = "&date="
+    axios
+      .get(
+        "https://cdn-api.co-vin.in/api/v2/admin/location/districts/" +
+          stateMatch
+      )
+      .then((res) => {
+        let data = res.data.districts;
+        // console.log(data)
+        districtMatch = data.filter(
+          (element) => element.district_name === districtName
+        );
+        if (districtMatch.length == 1) {
+          let a =
+            "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=";
+          let c = "&date=";
           let current = new Date();
           let addOne = current.getMonth() + 1;
-          let d = current.getDate() + "-" + addOne + "-" + current.getFullYear();
-          finalURL = a + districtMatch[0].district_id + c + d
+          let d =
+            current.getDate() + "-" + addOne + "-" + current.getFullYear();
+          finalURL = a + districtMatch[0].district_id + c + d;
           // finalURL = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=512&date=31-03-2021";
           console.log(finalURL);
           axios.get(finalURL).then((res) => {
             setDistricts7Days(res.data.centers);
-            console.log(res.data.centers)
-          })
-      } else{
-        setFoundState(false)
-      }
-    })
+            console.log(res.data.centers);
+          });
+        } else {
+          setFoundState(false);
+        }
+      });
   };
 
   const getZipCode7Days = () => {
     //you'll have to make this work
     console.log("the function ran");
+    axios
+      .get(
+        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=" +
+          name +
+          "&date=" +
+          districtDate
+      )
+      .then((res) => {
+        console.log(res.data);
+        setZipCode7Days(res.data.centers);
+      });
     // axios api string => "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=110001&date=31-03-2021"
   };
 
@@ -345,12 +451,12 @@ function GetState() {
     } else if (a === "Zip Code (today)") {
       findSessionByZip(name);
       console.log("field is " + a);
-    } else if (a === "District (today)"){
+    } else if (a === "District (today)") {
       getDistrictToday();
-    } else if (a === "District (7 days)"){
-      getDistrict7Days()
-    } else if (a === "Zip Code (7 days)"){
-      getZipCode7Days()
+    } else if (a === "District (7 days)") {
+      getDistrict7Days();
+    } else if (a === "Zip Code (7 days)") {
+      getZipCode7Days();
     }
   };
 
@@ -358,7 +464,7 @@ function GetState() {
     let input = e.target.value;
     //the little bit of code here is used to automatically capitalize the first letter
     setName(input.charAt(0).toUpperCase() + input.slice(1));
-    console.log(name)
+    console.log(name);
   };
 
   const getDistrictName = (e) => {
@@ -369,10 +475,10 @@ function GetState() {
 
   const getDistrictDate = (e) => {
     let input = e.target.value;
-    let revInput = input.split("-").reverse().join("-")
+    let revInput = input.split("-").reverse().join("-");
     setDistrictDate(revInput);
     // console.log(districtDate)
-  };  
+  };
 
   const checkStateName = (x) => {
     let temp;
@@ -392,7 +498,7 @@ function GetState() {
         .then((res) => {
           temp = res.data.districts;
           setDistricts(temp);
-          setFoundState(true)
+          setFoundState(true);
         });
     } else {
       setFoundState(false);
@@ -419,57 +525,68 @@ function GetState() {
     //then i sent another GET request for all the centers and their info
     let stateMatch, districtMatch, finalURL;
 
-    stateMatch = states.filter(element => element.state_name === name);
-    stateMatch = stateMatch[0].state_id
+    stateMatch = states.filter((element) => element.state_name === name);
+    stateMatch = stateMatch[0].state_id;
 
-    
-    axios.get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + stateMatch).then((res) => {
-      let data = res.data.districts;
-      console.log(data)
-      districtMatch = data.filter(element => element.district_name === districtName);
-      if(districtMatch.length==1){
-        let a = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id="
-          let c = "&date="
+    axios
+      .get(
+        "https://cdn-api.co-vin.in/api/v2/admin/location/districts/" +
+          stateMatch
+      )
+      .then((res) => {
+        let data = res.data.districts;
+        console.log(data);
+        districtMatch = data.filter(
+          (element) => element.district_name === districtName
+        );
+        if (districtMatch.length == 1) {
+          let a =
+            "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=";
+          let c = "&date=";
           let current = new Date();
           let addOne = current.getMonth() + 1;
-          let d = current.getDate() + "-" + addOne + "-" + current.getFullYear();
-          finalURL = a + districtMatch[0].district_id + c + d
+          let d =
+            current.getDate() + "-" + addOne + "-" + current.getFullYear();
+          finalURL = a + districtMatch[0].district_id + c + d;
           console.log(finalURL);
           axios.get(finalURL).then((res) => {
             setSpecificDistrict(res.data.sessions);
-          })
-      } else{
-        setFoundState(false)
-      }
-    })
+          });
+        } else {
+          setFoundState(false);
+        }
+      });
   };
 
-
   const renderLoader = (field) => {
-    let tempRender
+    let tempRender;
     switch (field) {
       case "State (today)":
-         tempRender = stateDistrictsAccordion
+        tempRender = stateDistrictsAccordion;
         break;
 
       case "Zip Code (today)":
-        tempRender = zipCodeCenter
+        tempRender = zipCodeCenter;
         break;
 
       case "District (today)":
-        tempRender = zipCodeCenter
+        tempRender = zipCodeCenter;
         break;
 
       case "District (7 days)":
-        tempRender = zipCodeCenter
+        tempRender = zipCodeCenter;
+        break;
+
+      case "Zip Code (7 days)":
+        tempRender = zipCodeCenter;
         break;
 
       default:
-        tempRender = null
+        tempRender = null;
         break;
     }
-    return tempRender
-  }
+    return tempRender;
+  };
 
   return (
     <div>
@@ -491,10 +608,18 @@ function GetState() {
                     Select Field of Search
                   </MenuItem>
                   <MenuItem value={"State (today)"}>State (today)</MenuItem>
-                  <MenuItem value={"District (today)"}>District (today)</MenuItem>
-                  <MenuItem value={"Zip Code (today)"}>Pin Code (today)</MenuItem>
-                  <MenuItem value={"District (7 days)"}>District (7 days)</MenuItem>
-                  <MenuItem value={"Zip Code (7 days)"}>Pin Code (7 days)</MenuItem>
+                  <MenuItem value={"District (today)"}>
+                    District (today)
+                  </MenuItem>
+                  <MenuItem value={"Zip Code (today)"}>
+                    Pin Code (today)
+                  </MenuItem>
+                  <MenuItem value={"District (7 days)"}>
+                    District (7 days)
+                  </MenuItem>
+                  <MenuItem value={"Zip Code (7 days)"}>
+                    Pin Code (7 days)
+                  </MenuItem>
                 </Select>
                 <FormHelperText>Enter Field of Search</FormHelperText>
               </FormControl>
@@ -507,7 +632,14 @@ function GetState() {
                 <TextField
                   label="State" /* {"" + field==="District (today)"? "State" : field + ""} */
                   id="outlined-start-adornment"
-                  style={{display: (field === "State (today)" || field === "District (today)" || field==="District (7 days)")? null : "none"}}
+                  style={{
+                    display:
+                      field === "State (today)" ||
+                      field === "District (today)" ||
+                      field === "District (7 days)"
+                        ? null
+                        : "none",
+                  }}
                   className={clsx(classes.margin, classes.textField)}
                   variant="outlined"
                   value={name}
@@ -526,7 +658,13 @@ function GetState() {
               >
                 <TextField
                   label="District"
-                  style={{display: (field==="District (today)" || field==="District (7 days)") ? null : "none"}}
+                  style={{
+                    display:
+                      field === "District (today)" ||
+                      field === "District (7 days)"
+                        ? null
+                        : "none",
+                  }}
                   id="outlined-start-adornment-for-district-name"
                   className={clsx(classes.margin, classes.textField)}
                   variant="outlined"
@@ -534,7 +672,7 @@ function GetState() {
                   error={!foundState}
                   helperText={!foundState ? "Incorrect Entry" : ""}
                   onChange={(e) => {
-                    getDistrictName(e)                  
+                    getDistrictName(e);
                   }}
                 />
               </Tooltip>
@@ -548,7 +686,13 @@ function GetState() {
                 <TextField
                   label="Zip Code" /* {"" + field==="District (today)"? "State" : field + ""} */
                   id="outlined-start-adornment"
-                  style={{display: (field === "Zip Code (today)" || field=== "Zip Code (7 days)")? null : "none"}}
+                  style={{
+                    display:
+                      field === "Zip Code (today)" ||
+                      field === "Zip Code (7 days)"
+                        ? null
+                        : "none",
+                  }}
                   className={clsx(classes.margin, classes.textField)}
                   variant="outlined"
                   value={name}
@@ -589,7 +733,13 @@ function GetState() {
                 <TextField
                   // label="Date"
                   type="date"
-                  style={{display: (field==="District (7 days)" || field === "Zip Code (7 days)") ? null : "none"}}
+                  style={{
+                    display:
+                      field === "District (7 days)" ||
+                      field === "Zip Code (7 days)"
+                        ? null
+                        : "none",
+                  }}
                   id="outlined-start-adornment"
                   className={clsx(classes.margin, classes.textField)}
                   variant="outlined"
@@ -597,7 +747,7 @@ function GetState() {
                   error={!foundState}
                   helperText={!foundState ? "Incorrect Entry" : ""}
                   onChange={(e) => {
-                    getDistrictDate(e)
+                    getDistrictDate(e);
                   }}
                 />
               </Tooltip>
@@ -627,18 +777,25 @@ function GetState() {
             >
               <span>
                 <Button
-                  style={{display: specificDistrict.length!=0 || districts.length!=0 ? null : "none"}}
+                  style={{
+                    display:
+                      specificDistrict.length != 0 || districts.length != 0
+                        ? null
+                        : "none",
+                  }}
                   variant="contained"
                   color="secondary"
                   //you can't remove the arrow function because the function will run the moment the component loads
                   onClick={() => {
-                     setField("")
-                     setDistricts([])
-                     setName("")
-                     setDistrictName("")
-                     setSpecificDistrict([])
-                     setDistricts7Days([])
-                    }}
+                    setField("");
+                    setDistricts([]);
+                    setName("");
+                    setDistrictName("");
+                    setSpecificDistrict([]);
+                    setDistricts7Days([]);
+                    setDistrictDate();
+                    setZipCode7Days([]);
+                  }}
                 >
                   Clear
                 </Button>
